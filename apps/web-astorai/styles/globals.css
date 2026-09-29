@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  background: #05060a;
+  color: #f4f4f5;
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(1200px 800px at 20% 0%, rgba(212,166,74,0.08), transparent 60%),
+    radial-gradient(1000px 700px at 90% 30%, rgba(126,230,233,0.06), transparent 60%),
+    radial-gradient(900px 600px at 50% 100%, rgba(167,139,250,0.05), transparent 60%),
+    #05060a;
+}
+
+/* 玻璃卡 */
+.glass {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 30px 60px -20px rgba(0,0,0,0.6);
+}
+
+.glass-strong {
+  background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+  border: 1px solid rgba(212,166,74,0.25);
+}
+
+/* 金色渐变文字 */
+.text-gold-gradient {
+  background: linear-gradient(120deg, #fde9b8 0%, #d4a64a 50%, #b8862f 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 漂浮粒子背景容器 */
+.particle-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 选项卡选中态 */
+.opt-card {
+  transition: all 0.25s ease;
+}
+.opt-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212,166,74,0.45);
+}
+.opt-card.selected {
+  background: linear-gradient(180deg, rgba(212,166,74,0.18), rgba(212,166,74,0.05));
+  border-color: rgba(212,166,74,0.7);
+  box-shadow: 0 0 0 1px rgba(212,166,74,0.4), 0 10px 40px -10px rgba(212,166,74,0.3);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #0a0d14; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#1a2030, #252b3b);
+  border-radius: 4px;
+}
+
+/* 链接 hover 金色下划线动画 */
+.link-gold {
+  position: relative;
+}
+.link-gold::after {
+  content: "";
+  position: absolute;
+  left: 0; bottom: -2px;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a64a, transparent);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+.link-gold:hover::after { transform: scaleX(1); }
+
+/* CTA 主按钮 */
+.btn-gold {
+  background: linear-gradient(120deg, #fde9b8 0%, #d4a64a 60%, #b8862f 100%);
+  color: #05060a;
+  font-weight: 600;
+  box-shadow: 0 10px 30px -8px rgba(212,166,74,0.5);
+  transition: all 0.2s ease;
+}
+.btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 40px -10px rgba(212,166,74,0.6);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #f4f4f5;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover {
+  border-color: rgba(212,166,74,0.6);
+  background: rgba(212,166,74,0.06);
+}

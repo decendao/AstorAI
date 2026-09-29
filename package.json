@@ -1,0 +1,13 @@
+{
+  "name": "astor-ai-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter @astorai/web dev",
+    "build": "pnpm --filter @astorai/web build",
+    "lint": "pnpm --filter @astorai/web lint",
+    "start": "pnpm --filter @astorai/web start"
+  },
+  "packageManager": "pnpm@9.15.0",
+  "engines": { "node": ">=22" }
+}
