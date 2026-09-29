@@ -1,0 +1,26 @@
+version: "1"
+
+stages:
+  - name: verify-web
+    image: node:22
+    script:
+      - echo "=== pnpm install (monorepo) ==="
+      - npm i -g pnpm@9.15.0
+      - pnpm install --frozen-lockfile
+      - echo "=== typecheck apps/web (含 @astorai/api-types, @astorai/compliance, @astorai/utils) ==="
+      - pnpm --filter @astorai/web exec tsc --noEmit
+      - echo "=== build apps/web ==="
+      - pnpm --filter @astorai/web build
+      - echo "=== redline gate: no forbidden phrases in shipped code ==="
+      - "! grep -rnE '(保本|稳赚不赔|零风险|必涨|100%会|内幕消息|强烈推荐)' apps/web/app apps/web/components || (echo 'redline pattern detected' && exit 1)"
+
+triggers:
+  push:
+    branches:
+      - master
+      - main
+  pull_request: {}
+
+options:
+  trigger_for_pr: true
+  trigger_for_push: true
