@@ -1,5 +1,6 @@
 version: "1"
 
+# ─── CI verify (push/PR) ────────────────────────────────────────
 stages:
   - name: verify-web
     image: node:22
@@ -7,20 +8,78 @@ stages:
       - echo "=== pnpm install (monorepo) ==="
       - npm i -g pnpm@9.15.0
       - pnpm install --frozen-lockfile
-      - echo "=== typecheck apps/web (含 @astorai/api-types, @astorai/compliance, @astorai/utils) ==="
+      - echo "=== typecheck apps/web ==="
       - pnpm --filter @astorai/web exec tsc --noEmit
       - echo "=== build apps/web ==="
       - pnpm --filter @astorai/web build
-      - echo "=== redline gate: no forbidden phrases in shipped code ==="
+      - echo "=== redline gate ==="
       - "! grep -rnE '(保本|稳赚不赔|零风险|必涨|100%会|内幕消息|强烈推荐)' apps/web/app apps/web/components || (echo 'redline pattern detected' && exit 1)"
 
 triggers:
   push:
-    branches:
-      - master
-      - main
+    branches: [master, main]
   pull_request: {}
 
 options:
   trigger_for_pr: true
   trigger_for_push: true
+
+# ─── Cloud IDE: 实时预览 (推送无关, 在 Web IDE 里手工启动) ────
+# CNB Code → Cloud IDE → 选 "dev" 模板, 自动执行 install + 起两个 dev 服务。
+# 端口面板: web 3000, ops 3010。改代码 → Next.js HMR 自动刷浏览器。
+dev:
+  services:
+    - name: install
+      image: node:22
+      cpu: 1
+      memory: 2
+      commands:
+        - npm i -g pnpm@9.15.0
+        - pnpm install --frozen-lockfile
+      env:
+        CI: "true"
+    - name: web-dev
+      image: node:22
+      cpu: 1
+      memory: 2
+      depends_on: [install]
+      ports: [3000]
+      commands:
+        - pnpm --filter @astorai/web dev
+      env:
+        NODE_ENV: development
+        NEXT_PUBLIC_BASE_URL: http://localhost:3000
+    - name: ops-dev
+      image: node:22
+      cpu: 1
+      memory: 1
+      depends_on: [install]
+      ports: [3010]
+      commands:
+        - pnpm --filter @astorai/ops dev
+      env:
+        NODE_ENV: development
+
+# ─── Branch preview (推送 preview/* → 独立 preview URL) ────
+# 适合稳定演示给投资人看 (与 dev 的 HMR 区分开, 这里 next start, 静态)
+preview:
+  stages:
+    - name: preview-build
+      image: node:22
+      script:
+        - npm i -g pnpm@9.15.0
+        - pnpm install --frozen-lockfile
+        - pnpm --filter @astorai/web build
+      when:
+        branch:
+          pattern: preview/*
+    - name: preview-serve
+      image: node:22
+      ports: [3000]
+      script:
+        - npm i -g pnpm@9.15.0
+        - pnpm install --frozen-lockfile --prod=false
+        - pnpm --filter @astorai/web start -p 3000 -H 0.0.0.0
+      when:
+        branch:
+          pattern: preview/*

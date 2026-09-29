@@ -41,6 +41,24 @@ pnpm --filter @astorai/web build
 pnpm --filter @astorai/compliance test   # 合规包单元测试
 ```
 
+## 实时预览 (CNB Cloud IDE / 本地隧道)
+
+CNB 仓库根已配好 `.cnb.yml`, 内含三种预览通道:
+
+| 通道 | 触发 | 用法 | 适用 |
+|------|------|------|------|
+| `dev` Cloud IDE | 在仓库页点 Cloud IDE → 选 dev | 容器内自动 `pnpm install`, 端口面板打开 3000/3010 | 改代码实时看效果 (HMR) |
+| `preview/*` 分支 | `git push origin preview/foo` | CI 自动 build + `next start`, 独立 preview URL | 给投资人稳定演示链接 |
+| `preview.sh tunnel` (本地) | `./scripts/preview.sh tunnel` | cloudflared quick tunnel 暴露 3000/3010 到公网 | 不用 CNB 也能分享 |
+
+使用:
+```bash
+./scripts/preview.sh dev       # 本地并行起 web + ops
+./scripts/preview.sh tunnel    # 本地起 dev + cloudflared 公网隧道
+./scripts/preview.sh cnb       # 打印 CNB Cloud IDE 操作步骤
+```
+Windows 等价: `scripts\preview.bat {dev|tunnel|cnb}`。
+
 ## 路线图
 
 - [x] P0: monorepo 骨架 + apps/web 官网

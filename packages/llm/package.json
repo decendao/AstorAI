@@ -2,11 +2,18 @@
   "name": "@astorai/llm",
   "version": "0.1.0",
   "private": true,
-  "description": "多 LLM 适配器 (zhipu/qwen/deepseek)",
+  "description": "多 LLM 适配器 (zhipu/qwen/deepseek) — OpenAI compat + mock",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "lint": "tsc --noEmit",
-    "test": "echo \"no tests yet\" && exit 0"
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@astorai/api-types": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.9.0"
   }
 }
