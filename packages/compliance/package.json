@@ -1,0 +1,19 @@
+{
+  "name": "@astorai/compliance",
+  "version": "0.1.0",
+  "private": true,
+  "description": "加密/RBAC/红线扫描合规三件套 — 任何处理会员敏感数据的应用必引",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "node --test src/__tests__/*.test.ts"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "@types/node": "^22.9.0"
+  }
+}

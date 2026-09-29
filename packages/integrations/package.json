@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/integrations",
+  "version": "0.1.0",
+  "private": true,
+  "description": "第三方 CRM/数据源",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/ops",
+  "version": "0.1.0",
+  "private": true,
+  "description": "运营后台 (AuditEvent/CRM)",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

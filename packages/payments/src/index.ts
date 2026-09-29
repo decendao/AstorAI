@@ -1,0 +1,1 @@
+// @astorai/payments — placeholder

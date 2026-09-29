@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/tools",
+  "version": "0.1.0",
+  "private": true,
+  "description": "内部脚本与数据迁移工具",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

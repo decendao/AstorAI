@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/notifications",
+  "version": "0.1.0",
+  "private": true,
+  "description": "短信/邮件/推送",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

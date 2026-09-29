@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/payments",
+  "version": "0.1.0",
+  "private": true,
+  "description": "微信/支付宝/模拟支付",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

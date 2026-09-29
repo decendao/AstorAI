@@ -1,0 +1,1 @@
+// @astorai/config — placeholder

@@ -1,47 +1,55 @@
-# Astor AI (astorai.cn)
+# Astor AI Monorepo
 
-终端用户产品线 —— 智能投研副驾 Astor AI 的官网、小程序、SDK、CRM、数据后台与数据飞轮。
+投资者联盟 (3A Investor Alliance) 的核心代码仓库 —— Next.js 15 + React 19 + TypeScript, pnpm workspaces 单仓多包架构。
 
-## 仓库结构 (monorepo 初始化)
+## 结构
 
 ```
 astor-ai/
-├── apps/
-│   └── web-astorai/        # 官网 (Next.js 15 + React 19)  ✅ 已开工
-└── packages/               # 待建: sdk / ui / api-types / llm / compliance
+├── apps/                  # 部署单元 (5)
+│   ├── web/               # @astorai/web        — 官网+会员后台 (Next.js App Router)
+│   ├── mobile/            # @astorai/mobile     — 移动端 H5 (待建)
+│   ├── docs/              # @astorai/docs       — 文档站 (待建)
+│   ├── ops/               # @astorai/ops        — 运营后台 (待建)
+│   └── tools/             # @astorai/tools      — 内部脚本与数据迁移 (待建)
+└── packages/              # 共享代码 (11)
+    ├── ui/                # @astorai/ui          — 设计系统、组件库
+    ├── compliance/        # @astorai/compliance  — 加密/RBAC/红线扫描 (核心复用)
+    ├── api-types/         # @astorai/api-types   — Survey/Report/Agent zod schemas
+    ├── llm/               # @astorai/llm         — 多 LLM 适配器 (zhipu/qwen/deepseek)
+    ├── agents/            # @astorai/agents      — Analyzer→Reporter→Reviewer 流水线
+    ├── payments/          # @astorai/payments    — 微信/支付宝/模拟支付
+    ├── storage/           # @astorai/storage     — OSS/本地存储抽象
+    ├── notifications/     # @astorai/notifications — 短信/邮件/推送
+    ├── integrations/      # @astorai/integrations — 第三方 CRM/数据源
+    ├── config/            # @astorai/config      — 共享 ESLint/TS/Tailwind 配置
+    └── utils/             # @astorai/utils       — 通用工具 (cn/date/format)
 ```
 
-## 当前进度 (P0 · 官网)
+## 复用原则
 
-- [x] 项目骨架 (Next.js 15 + Tailwind + Framer Motion + Recharts)
-- [x] 设计系统 (深空黑 + 金 · Glassmorphism · 漂浮粒子)
-- [x] Hero (中央交互 + Gemini 风)
-- [x] 6 题问卷 (Typeform 全屏切换)
-- [x] 初级画像报告 (Apple Health 浅色面板)
-- [x] AstorAgent 能力展示 (6 卡)
-- [x] AstorAgent 实时 Demo (mock 流式)
-- [x] 定价区 (¥99/月 · ¥999/年)
-- [x] API 路由 (问卷提交)
-- [x] SEO (sitemap/robots/OG/meta)
+- **合规三件套** (`@astorai/compliance`): encryption (AES-256-GCM + HMAC-SHA256 blind index)、rbac (L1-L5 权限)、redline (合规扫描) —— 从 websitte 抽离, 任何需要处理会员敏感数据的应用都必须引用。
+- **API 类型契约** (`@astorai/api-types`): Survey/Report/Agent 三个核心实体的 zod schema, 前后端共享, 杜绝字段拼写漂移。
+- **业务不动, 包装先稳**: 这次重构不改业务逻辑, 只搬骨架 + 抽合规包; 业务迁移下一轮做。
 
-## 下一步
+## 快速开始
 
-- [ ] 注册/登录页 (手机号 + 微信扫码)
-- [ ] 微信支付 / 支付宝 接入
-- [ ] 真实数据库 (Prisma + PG16)
-- [ ] AstorAgent 真实对话 (接 zhipu/qwen/deepseek)
-- [ ] 36 题深度问卷 (v2)
-- [ ] Taro 微信小程序
-- [ ] CRM 后台 (复用 Astor OS 视图)
-- [ ] 数据后台 + 飞轮 pipeline
+```bash
+pnpm install
+pnpm dev          # 启动 @astorai/web
+pnpm --filter @astorai/web build
+pnpm --filter @astorai/compliance test   # 合规包单元测试
+```
 
-## 商业策略
+## 路线图
 
-- 统一价 ¥99/月, 年度限时 ¥999/年 (省 ¥189)
-- 7 天免费试用, 无需信用卡
-- 个人/企业同口径 (后续 enterprise tier 单独定价)
+- [x] P0: monorepo 骨架 + apps/web 官网
+- [ ] P1: 抽 packages/compliance 复用 websitte 加密/RBAC/红线
+- [ ] P1: 建 packages/api-types (Survey/Report/Agent zod)
+- [ ] P2: apps/ops 运营后台 (含 AuditEvent 查看)
+- [ ] P2: apps/mobile 移动端 (Next.js H5)
+- [ ] P3: packages/integrations 接第三方 CRM
 
-## 关联仓库
+## 许可
 
-- 3A 投资者联盟 (cnb.cool/tripAinvestors/websitte): 内循环 CRM
-- Astor AI (本仓): 终端用户产品
+Apache-2.0

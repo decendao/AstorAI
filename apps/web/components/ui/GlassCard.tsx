@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/lib/cn";
+import { cn } from "@astorai/utils";
 
 export function GlassCard({
   className,

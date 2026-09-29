@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/config",
+  "version": "0.1.0",
+  "private": true,
+  "description": "共享 ESLint/TS/Tailwind 配置",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}

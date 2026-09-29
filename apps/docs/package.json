@@ -1,0 +1,12 @@
+{
+  "name": "@astorai/docs",
+  "version": "0.1.0",
+  "private": true,
+  "description": "文档站",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "lint": "tsc --noEmit",
+    "test": "echo \"no tests yet\" && exit 0"
+  }
+}
