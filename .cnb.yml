@@ -59,27 +59,3 @@ dev:
         - pnpm --filter @astorai/ops dev
       env:
         NODE_ENV: development
-
-# ─── Branch preview (推送 preview/* → 独立 preview URL) ────
-# 适合稳定演示给投资人看 (与 dev 的 HMR 区分开, 这里 next start, 静态)
-preview:
-  stages:
-    - name: preview-build
-      image: node:22
-      script:
-        - npm i -g pnpm@9.15.0
-        - pnpm install --frozen-lockfile
-        - pnpm --filter @astorai/web build
-      when:
-        branch:
-          pattern: preview/*
-    - name: preview-serve
-      image: node:22
-      ports: [3000]
-      script:
-        - npm i -g pnpm@9.15.0
-        - pnpm install --frozen-lockfile --prod=false
-        - pnpm --filter @astorai/web start -p 3000 -H 0.0.0.0
-      when:
-        branch:
-          pattern: preview/*
