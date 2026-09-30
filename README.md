@@ -41,19 +41,18 @@ pnpm --filter @astorai/web build
 pnpm --filter @astorai/compliance test   # 合规包单元测试
 ```
 
-## 实时预览 (Vercel · CNB Cloud IDE · 本地隧道)
+## 实时预览 (Vercel)
 
-**首选 · Vercel 一键部署** (推荐, 最快拿稳定 URL):
+**首选 · 独立仓部署**: Vercel 部署 `github.com/decendao/astor-web` (从本 monorepo `apps/web/` 镜像)。
 
-1. vercel.com → New Project → Import `github.com/decendao/AstorAI` (已镜像)
-2. Root Directory: `apps/web`
-3. Framework: Next.js (自动检测)
-4. 环境变量: 留空 (mock provider 默认)
-5. Deploy → 拿到 `https://astorai.vercel.app` (30 秒)
+1. vercel.com → Import `github.com/decendao/astor-web`
+2. Framework: Next.js (自动)
+3. Environment Variables: 留空 (mock provider)
+4. Deploy → `https://astor-web.vercel.app`
 
 详情见 `VERCEL.md`。push master 自动部署, PR 自动起 preview。
 
-CNB 仓库根已配好 `.cnb.yml`, 内含两种补充通道:
+修改主仓后自动同步到 astor-web: GitHub Action `.github/workflows/sync-astor-web.yml` (需在 monorepo 仓设 secret `ASTOR_WEB_TOKEN`)。
 
 | 通道 | 触发 | 用法 | 适用 |
 |------|------|------|------|

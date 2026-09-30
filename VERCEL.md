@@ -1,26 +1,30 @@
 # ─── Astor OS · Vercel 部署配置 ─────────────────────────────
-# Vercel Project Root: apps/web
-# Build Command:      pnpm --filter @astorai/web build (默认)
-# Install Command:    pnpm install --frozen-lockfile (默认)
-# Output:             apps/web/.next
+# 独立 GitHub 仓部署 (从 monorepo 分离, 解决 Vercel 框架检测与 pnpm workspace 冲突)
 #
-# 国内访问: Vercel 国内直连慢 (200-500ms), 但 Next.js 体验最好。
-# 折中方案: 国内 CDN 走阿里云 OSS/CDN, 海外演示走 Vercel, 两套并行。
+# GitHub:    github.com/decendao/astor-web
+# Vercel:    Import this repo (NOT the monorepo AstorAI)
+# Framework: Next.js (自动检测)
 #
 # 用法:
-#   1. vercel.com → New Project → Import Git Repository
-#      选 github.com/decendao/AstorAI (镜像仓)
-#   2. Root Directory: apps/web
-#   3. Framework Preset: Next.js (自动检测)
-#   4. Build/Install 命令留空 (用默认)
-#   5. 环境变量 (Production):
-#        NEXT_PUBLIC_BASE_URL = https://astorai.vercel.app
-#        ASTOR_PAY_PROVIDER  = mock        (先用 mock, 上线再切)
-#        ASTOR_LLM_PROVIDER  = mock
-#        DATABASE_URL        = (Vercel Postgres / Neon 连接串)
-#   6. Deploy
+#   1. vercel.com → New Project → Import github.com/decendao/astor-web
+#   2. Root Directory: 留空 (仓根 = 项目根)
+#   3. Framework Preset: Next.js (默认即可)
+#   4. Build/Install/Output: 全部留空用默认
+#   5. 环境变量 (Production + Preview):
+#        DATABASE_URL        = Neon Pooled connection string
+#        DATABASE_DIRECT_URL = Neon Direct connection string
+#        IP_HASH_SALT        = 随机字符串 (survey 入库时 SHA256 加盐用)
+#   6. Deploy → 拿到 https://astor-web.vercel.app
 #
-# 持续部署: push master → Vercel 自动构建 (GitHub App 钩子)
-# 预览部署: PR → 自动起 preview URL (https://astorai-git-<branch>.vercel.app)
+# 持续部署:
+#   - push 到 astor-web master → Vercel 自动构建 (30 秒)
+#   - PR → 自动起 preview URL
 #
-# 国内加速: 后续可加自定义域名 + Cloudflare CDN 反代 Vercel origin
+# 与 monorepo 同步:
+#   - monorepo 仓 (.github/workflows/sync-astor-web.yml) push master 时
+#     自动 rsync apps/web → decendao/astor-web
+#   - 反向不自动 (astor-web 仓的改动不回 monorepo, 避免冲突)
+#
+# 国内加速:
+#   - 给项目绑自定义域名 → Cloudflare 反代 Vercel origin (国内 < 200ms)
+#   - 或部署到阿里云 OSS/CDN (走 scripts/deploy/deploy-oss.sh)

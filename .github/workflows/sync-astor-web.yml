@@ -1,0 +1,50 @@
+name: Sync apps/web → decendao/astor-web
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'apps/web/**'
+      - '.github/workflows/sync-astor-web.yml'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: rsync apps/web → /tmp/astor-web
+        run: |
+          mkdir -p /tmp/astor-web
+          rsync -av --delete \
+            --exclude='.next' \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='.env' \
+            apps/web/ /tmp/astor-web/
+
+      - name: Commit & push to astor-web
+        working-directory: /tmp/astor-web
+        run: |
+          git config user.email "astor-bot@3a-alliance.local"
+          git config user.name "Astor Sync Bot"
+          git remote set-url origin https://x-access-token:${{ secrets.ASTOR_WEB_TOKEN }}@github.com/decendao/astor-web.git
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to sync"
+            exit 0
+          fi
+          git commit -m "sync from monorepo apps/web @ $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push origin master
+
+      - name: Trigger Vercel deploy (via push hook)
+        # astor-web 仓的 Vercel GitHub App 钩子在 master push 时自动触发
+        # 此步为保险: 如果 Vercel 没反应, 手动调 deploy hook
+        run: |
+          if [ -n "${{ secrets.VERCEL_DEPLOY_HOOK }}" ]; then
+            curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK }}"
+            echo "Deploy hook triggered"
+          fi
