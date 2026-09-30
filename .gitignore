@@ -33,3 +33,7 @@ preview.html
 preview.bat
 astor-preview.tar.gz
 deploy_url.txt
+
+# OSS 部署配置
+.oss-deploy.conf
+.oss-backup/
