@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#0E0C0A" />
+<title>洞察 · AstorAI</title>
+<meta name="description" content="财富诊断、资产结构与圈层认知的深度内容。不荐股，不承诺收益。" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,500&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/core.css" />
+</head>
+<body>
+
+<div class="bg">
+  <div class="blob a"></div>
+  <div class="blob b"></div>
+  <div class="grid"></div>
+  <div class="noise"></div>
+  <div class="vig"></div>
+</div>
+
+<nav class="nav">
+  <div class="brand">
+    <span class="aaa">AAA</span>
+    <span class="nm">AstorAI</span>
+  </div>
+  <div class="nlinks">
+    <a href="../index.html#manifesto">为什么</a>
+    <a href="../index.html#diagnose">诊断</a>
+    <a href="../index.html#audit">可信</a>
+    <a href="../index.html#pricing">定价</a>
+  </div>
+  <a href="../index.html#diagnose" class="btn sm"><span>免费诊断</span></a>
+</nav>
+
+<main>
+
+<section class="wrap" style="padding-top:calc(110px + env(safe-area-inset-top,0px))">
+  <div class="smark">
+    <span class="en">Insights</span>
+    <span class="cn">洞察</span>
+    <span class="ln"></span>
+    <span class="n">READING</span>
+  </div>
+  <h1>关于资产、判断，<br>以及<em>它们之间</em>的关系</h1>
+  <p class="lead" style="margin-bottom:clamp(20px,3vw,32px)">
+    我们不写市场点评，不写产品推荐。<br>
+    我们写那些<em>需要想清楚</em>才能回答的问题。
+  </p>
+
+  <div class="filters" id="filters">
+    <button class="on" data-f="all">全部</button>
+    <button data-f="diagnosis">财富诊断</button>
+    <button data-f="structure">资产结构</button>
+    <button data-f="circle">圈层认知</button>
+    <button data-f="trust">可审计</button>
+  </div>
+
+  <div class="posts" id="posts"></div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="fgrid">
+      <div class="fcol">
+        <div class="mark">AAA</div>
+        <div class="l" style="line-height:2.1">
+          AstorAI 财富智能体<br>
+          3A Investors Alliance<br>
+          Est. MMXXVI · Shanghai
+        </div>
+      </div>
+      <div class="fcol">
+        <div class="k">PRODUCT</div>
+        <div class="l">免费诊断<br>财富诊断<br>全景统筹<br>陪伴服务</div>
+      </div>
+      <div class="fcol">
+        <div class="k">INSIGHTS</div>
+        <div class="l">
+          <a href="index.html" style="color:var(--muted-2);text-decoration:none">全部洞察</a><br>
+          <a href="../index.html#diagnose" style="color:var(--muted-2);text-decoration:none">免费诊断</a>
+        </div>
+      </div>
+      <div class="fcol">
+        <div class="k">BOUNDARY</div>
+        <div class="l">不荐股<br>不交易<br>不承诺收益<br>不代客理财</div>
+      </div>
+    </div>
+    <div class="dis">
+      <b>DISCLAIMER</b>
+      AstorAI 为信息咨询与投资者教育服务提供方，运营主体不具备任何证券投资咨询、基金销售、资产管理等业务资质。本网站所载内容均为研究观点与一般性信息，不构成投资建议、要约或承诺，不构成对任何产品收益的保证。<br><br>
+      任何涉及投资决策的判断，请咨询具备相应资质的持牌机构。市场有风险，投资需谨慎。
+    </div>
+  </div>
+</footer>
+
+<script>
+const POSTS = [
+  {
+    slug: 'shelf-vs-understanding',
+    cat: 'diagnosis', catLabel: 'Diagnosis',
+    date: '2026-09-28', read: '8 min',
+    t: '产品货架的访问权，不等于理解的访问权',
+    d: '这个行业给了你更多的产品，并称之为"专业"。但拥有和理解之间，隔着一整个行业没有告诉你的距离。'
+  },
+  {
+    slug: 'audit-first',
+    cat: 'trust', catLabel: 'Trust',
+    date: '2026-09-24', read: '6 min',
+    t: '在 AI 管钱这件事上，敢信比聪明值钱十倍',
+    d: '一个会犯错但每一步可追溯的系统，比一个永远正确但说不清来源的系统，值得托付得多。'
+  },
+  {
+    slug: 'family-office-ai',
+    cat: 'structure', catLabel: 'Structure',
+    date: '2026-09-20', read: '10 min',
+    t: '同样是家办的深度，为什么成本差了三个数量级',
+    d: '方法论早就成熟了，成熟的是方法，不成熟的是把它规模化交付给每一个人的能力。'
+  },
+  {
+    slug: 'self-recognition-compounds',
+    cat: 'diagnosis', catLabel: 'Diagnosis',
+    date: '2026-09-16', read: '7 min',
+    t: '自我认知会复利',
+    d: '一次系统的诊断不会立刻改变你的收益曲线，但它会改变此后十年每一个决策的起点。'
+  },
+  {
+    slug: 'one-line-table',
+    cat: 'circle', catLabel: 'Circle',
+    date: '2026-09-12', read: '5 min',
+    t: '缺的不是资源，是一张结构化的桌',
+    d: '值得深聊的人一直都在。但遇见他们这件事，从来没有变成一件可以被设计的事。'
+  },
+  {
+    slug: 'diversified-but-blind',
+    cat: 'structure', catLabel: 'Structure',
+    date: '2026-09-08', read: '7 min',
+    t: '分散在五处，和看得见，是两件事',
+    d: '账户数量不是结构。真正的分散，需要你知道自己到底持有什么、彼此之间在什么关系上。'
+  },
+  {
+    slug: 'draft-and-approve',
+    cat: 'trust', catLabel: 'Trust',
+    date: '2026-09-04', read: '6 min',
+    t: 'AI 出草稿，人批准才生效',
+    d: '把最后那个确认键留在人手里，不是因为技术不够，而是因为责任永远需要有人承担。'
+  },
+  {
+    slug: 'whos-missing',
+    cat: 'circle', catLabel: 'Circle',
+    date: '2026-08-31', read: '6 min',
+    t: '最好的金融指引，留给了最不需要它的人',
+    d: '七位数起步的门槛，百分之一的费率。这道墙筛掉的不是资产，是那些最需要被认真对待的人。'
+  },
+  {
+    slug: 'five-dimensions',
+    cat: 'diagnosis', catLabel: 'Diagnosis',
+    date: '2026-08-27', read: '9 min',
+    t: '五个维度，比一个风险测评问卷更接近你',
+    d: '"稳健型"这三个字没有信息量。五维画像想做的，是把那三个字重新拆开。'
+  },
+  {
+    slug: 'quarterly-review',
+    cat: 'structure', catLabel: 'Structure',
+    date: '2026-08-22', read: '5 min',
+    t: '为什么是季度复诊，而不是每天盯着',
+    d: '过度监控和完全不管，是同一件事的两端。真正有效的节奏，是让判断有沉淀的时间。'
+  },
+  {
+    slug: 'no-commission',
+    cat: 'trust', catLabel: 'Trust',
+    date: '2026-08-18', read: '7 min',
+    t: '我们靠什么活下去：一份收入结构的说明',
+    d: '100% 订阅，0% 分佣。这不是道德承诺，是主体资质决定的制度设计。'
+  },
+  {
+    slug: 'first-examination',
+    cat: 'diagnosis', catLabel: 'Diagnosis',
+    date: '2026-08-14', read: '4 min',
+    t: '没有体检报告的治疗，都是碰运气',
+    d: '财富管理也一样。在你决定钱往哪放之前，先搞清楚自己手里到底有什么。'
+  }
+];
+
+const CAT = {
+  diagnosis: '财富诊断',
+  structure: '资产结构',
+  circle:   '圈层认知',
+  trust:    '可审计'
+};
+
+const wrap = document.getElementById('posts');
+
+function render(list) {
+  wrap.innerHTML = list.map(p => `
+    <a class="post" href="posts/${p.slug}.html">
+      <div class="meta">
+        <span class="cat">${p.catLabel}</span>
+        <span class="date">${p.date}</span>
+        <span class="read">${p.read}</span>
+      </div>
+      <div class="t">${p.t}</div>
+      <div class="d">${p.d}</div>
+    </a>`).join('');
+}
+
+render(POSTS);
+
+document.getElementById('filters').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-f]');
+  if (!b) return;
+  document.querySelectorAll('#filters button').forEach(x => x.classList.remove('on'));
+  b.classList.add('on');
+  const f = b.dataset.f;
+  render(f === 'all' ? POSTS : POSTS.filter(p => p.cat === f));
+});
+</script>
+</body>
+</html>
