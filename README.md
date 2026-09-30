@@ -41,9 +41,19 @@ pnpm --filter @astorai/web build
 pnpm --filter @astorai/compliance test   # 合规包单元测试
 ```
 
-## 实时预览 (CNB Cloud IDE / 本地隧道)
+## 实时预览 (Vercel · CNB Cloud IDE · 本地隧道)
 
-CNB 仓库根已配好 `.cnb.yml`, 内含三种预览通道:
+**首选 · Vercel 一键部署** (推荐, 最快拿稳定 URL):
+
+1. vercel.com → New Project → Import `github.com/decendao/AstorAI` (已镜像)
+2. Root Directory: `apps/web`
+3. Framework: Next.js (自动检测)
+4. 环境变量: 留空 (mock provider 默认)
+5. Deploy → 拿到 `https://astorai.vercel.app` (30 秒)
+
+详情见 `VERCEL.md`。push master 自动部署, PR 自动起 preview。
+
+CNB 仓库根已配好 `.cnb.yml`, 内含两种补充通道:
 
 | 通道 | 触发 | 用法 | 适用 |
 |------|------|------|------|

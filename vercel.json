@@ -1,0 +1,17 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @astorai/web build",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "outputDirectory": "apps/web/.next",
+  "builds": [
+    {
+      "src": "apps/web/package.json",
+      "use": "@vercel/nextjs"
+    }
+  ],
+  "github": {
+    "silent": false
+  }
+}
