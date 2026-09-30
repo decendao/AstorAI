@@ -3,12 +3,16 @@
 import Link from "next/link";
 import { Btn } from "@/components/ui/Editorial";
 
+/**
+ * 导航项使用绝对路径（/#section），
+ * 否则在 /insights、/astor 等子页面上相对锚点会失效。
+ */
 const NAV = [
-  { href: "#manifesto", label: "为什么" },
-  { href: "#believe", label: "我们相信" },
-  { href: "#diagnose", label: "诊断" },
-  { href: "#audit", label: "可信" },
-  { href: "#pricing", label: "定价" },
+  { href: "/#manifesto", label: "为什么" },
+  { href: "/#believe", label: "我们相信" },
+  { href: "/#diagnose", label: "诊断" },
+  { href: "/#audit", label: "可信" },
+  { href: "/#pricing", label: "定价" },
   { href: "/insights", label: "洞察" },
   { href: "/astor", label: "演示" },
 ];
@@ -37,7 +41,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="shrink-0">
-          <Btn href="#diagnose" className="!px-5 !py-2.5 !text-[12px] !min-h-[40px]">
+          <Btn href="/#diagnose" className="!px-5 !py-2.5 !text-[12px] !min-h-[40px]">
             免费诊断
           </Btn>
         </div>
