@@ -1,20 +1,34 @@
-import { HeroSection } from "@/components/hero/HeroSection";
-import { SurveyFlow } from "@/components/survey/SurveyFlow";
-import { AgentCapabilities } from "@/components/agent/AgentCapabilities";
-import { AgentDemo } from "@/components/agent/AgentDemo";
-import { PricingSection } from "@/components/pricing/PricingSection";
+import { FloatingParticles } from "@/components/ui/FloatingParticles";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import { HeroSection } from "@/components/hero/HeroSection";
+import { Manifesto } from "@/components/manifesto/Manifesto";
+import { BelieveSection } from "@/components/believe/BelieveSection";
+import { Contrast } from "@/components/contrast/Contrast";
+import { SurveyFlow } from "@/components/survey/SurveyFlow";
+import {
+  CapabilitySection,
+  AuditSection,
+} from "@/components/agent/AgentSections";
+import {
+  PricingSection,
+  CtaSection,
+} from "@/components/pricing/PricingSection";
 
 export default function HomePage() {
   return (
     <main className="relative min-h-screen">
+      <FloatingParticles />
       <SiteHeader />
       <HeroSection />
-      <div id="capabilities"><AgentCapabilities /></div>
-      <div id="demo"><AgentDemo /></div>
+      <Manifesto />
+      <BelieveSection />
+      <Contrast />
       <SurveyFlow />
+      <CapabilitySection />
+      <AuditSection />
       <PricingSection />
+      <CtaSection />
       <SiteFooter />
     </main>
   );

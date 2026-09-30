@@ -1,113 +1,60 @@
-"use client";
+import { Btn } from "@/components/ui/Editorial";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { FloatingParticles, FloatingOrb } from "@/components/ui/FloatingParticles";
-
-/**
- * Hero 区 —— 大标题 + 漂浮粒子 + CTA + 双入口
- * 视觉参考: Gemini chat landing 的"中央交互区 + 周围信息漂浮"
- */
 export function HeroSection() {
+  const meta = [
+    { k: "Est. MMXXVI", v: "上海 · 始于 2026" },
+    { k: "¥100 / 月", v: "普惠订阅 · 零资产门槛" },
+    { k: "0%", v: "来自产品抽成与分佣" },
+  ];
+
   return (
-    <section className="relative min-h-[88vh] flex items-center justify-center overflow-hidden">
-      {/* 背景粒子 */}
-      <FloatingParticles count={70} density={1.5} />
+    <section className="relative z-10 min-h-screen flex flex-col justify-center pt-28 sm:pt-36 pb-16">
+      <div className="mx-auto max-w-shell px-5 sm:px-8 w-full">
+        <div className="self-start border border-gold-500/30 px-5 sm:px-6 py-2.5 mb-10 sm:mb-16 font-display italic text-[12px] sm:text-[15px] tracking-[0.24em] text-gold-500">
+          AstorAI · Private Banker Agent · MMXXVI
+        </div>
 
-      {/* 漂浮光晕 */}
-      <FloatingOrb size={420} color="rgba(212,166,74,0.22)" className="top-20 -left-32" />
-      <FloatingOrb size={360} color="rgba(126,230,233,0.18)" className="bottom-10 right-0" delay={3} />
-      <FloatingOrb size={280} color="rgba(167,139,250,0.15)" className="top-1/3 right-1/4" delay={6} />
+        <h1 className="font-display font-normal leading-[0.88] tracking-[0.04em] text-paper mb-4 sm:mb-5 text-[clamp(72px,20vw,190px)]">
+          A<em className="em-gold not-italic">A</em>A
+        </h1>
 
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 text-center">
-        {/* 顶部小标 */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass mb-8"
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-gold-300 animate-glow" />
-          <span className="text-xs text-zinc-300">
-            智能投研副驾 · 限时年付 ¥999
-          </span>
-        </motion.div>
+        <h2 className="font-bold tracking-[-0.02em] text-paper leading-[1.14] mb-8 sm:mb-11 text-[clamp(30px,6.6vw,76px)] max-w-[14ch]">
+          An Agent
+          <br />
+          that knows your
+          <br />
+          <em className="em-gold">assets</em> better than you
+        </h2>
 
-        {/* 主标题 */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-display text-5xl sm:text-7xl lg:text-8xl font-medium leading-[1.05] tracking-tight"
-        >
-          <span className="block text-gold-gradient">Astor AI</span>
-          <span className="block text-zinc-100 mt-2 text-3xl sm:text-5xl lg:text-6xl">
-            您的智能
-            <span className="text-gold-gradient">投研副驾</span>
-          </span>
-        </motion.h1>
+        <p className="text-[15px] sm:text-[19px] leading-[2] text-paper/40 max-w-[46ch] mb-10 sm:mb-14">
+          比你更懂你的资产的财富智能体 ——
+          <br />
+          我们不在这里交易你的资产，我们在帮你
+          <em className="em-gold">透过资产理解自己</em>。
+        </p>
 
-        {/* 副标 */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.25 }}
-          className="mt-8 text-base sm:text-lg text-zinc-400 max-w-2xl mx-auto leading-relaxed"
-        >
-          60 秒画像 · 36 题深度诊断 · AstorAgent 实时对话 · 投研日报 ·
-          组合管理 · 风险预警。让 AI 成为您下一个投资决策的协同者。
-        </motion.p>
+        <div className="flex flex-wrap gap-3.5 mb-5">
+          <Btn href="#diagnose" solid lg>
+            免费获取我的财富诊断
+          </Btn>
+          <Btn href="#capability" lg>
+            了解 AstorAI 如何工作
+          </Btn>
+        </div>
+        <div className="text-[12.5px] tracking-[0.04em] text-paper/20 mb-14 sm:mb-20">
+          6 道题 · 约 2 分钟 · 无需注册
+        </div>
 
-        {/* 双 CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Link
-            href="#survey-start"
-            className="btn-gold rounded-xl px-7 py-3.5 text-base"
-          >
-            开始 6 题画像诊断 →
-          </Link>
-          <Link
-            href="/agent"
-            className="btn-ghost rounded-xl px-7 py-3.5 text-base"
-          >
-            了解 AstorAgent
-          </Link>
-        </motion.div>
-
-        {/* 信任栏 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
-          className="mt-14 flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-xs text-zinc-500"
-        >
-          <span>合规 · 投资建议由您独立判断</span>
-          <span className="hidden sm:inline">·</span>
-          <span>备案 · 浙 ICP 备 20xxxxxxx 号</span>
-          <span className="hidden sm:inline">·</span>
-          <span>数据 · 多模型路由 (zhipu/qwen/deepseek)</span>
-        </motion.div>
-
-        {/* 向下滚动提示 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 1 }}
-          className="mt-16 flex justify-center"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="text-zinc-600 text-sm"
-          >
-            ↓ 下滑开始诊断
-          </motion.div>
-        </motion.div>
+        <div className="hair-t pt-7 sm:pt-10 flex flex-wrap gap-x-8 sm:gap-x-20 gap-y-6">
+          {meta.map((m) => (
+            <div key={m.k}>
+              <div className="font-display text-[16px] sm:text-[24px] tracking-[0.08em] text-paper mb-1.5">
+                {m.k.includes("Est") ? <em className="em-gold">{m.k}</em> : m.k}
+              </div>
+              <div className="text-[12px] tracking-[0.08em] text-paper/25">{m.v}</div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

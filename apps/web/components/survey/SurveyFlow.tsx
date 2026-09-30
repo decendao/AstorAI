@@ -1,330 +1,217 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
 import {
   SURVEY_QUESTIONS,
-  extractSignals,
+  type QuestionId,
   type SurveyAnswers,
-  type PrimaryProfile,
 } from "@/lib/survey-questions";
+import { computeProfile } from "@/lib/scoring";
 import { ReportPanel } from "@/components/report/ReportPanel";
+import { SectionMark, Btn } from "@/components/ui/Editorial";
 
-/**
- * 6 题问卷 —— Typeform 全屏切换风
- * - 一次一题, 占据视口
- * - 顶部进度条 (1/6)
- * - 左侧信号反馈粒子 (漂浮)
- * - 答完一题 → 0.5s 切下一题
- * - 6 题完成 → 自动滑出报告 (Apple Health 浅色面板)
- */
+type Answers = Record<QuestionId, string[]>;
+const EMPTY: Answers = { q1: [], q2: [], q3: [], q4: [], q5: [], q6: [] };
+
 export function SurveyFlow() {
-  const [answers, setAnswers] = useState<Partial<SurveyAnswers>>({});
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [completed, setCompleted] = useState(false);
-  const [profile, setProfile] = useState<PrimaryProfile | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [started, setStarted] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [ans, setAns] = useState<Answers>(EMPTY);
+  const [free, setFree] = useState("");
+  const [report, setReport] = useState<ReturnType<typeof computeProfile> | null>(null);
 
-  const current = SURVEY_QUESTIONS[currentIdx];
-  const total = SURVEY_QUESTIONS.length;
-  const progress = (Object.keys(answers).length / total) * 100;
-  const signals = extractSignals(answers);
+  const q = SURVEY_QUESTIONS[idx];
+  const done = report !== null;
 
-  const handleSelect = (value: string) => {
-    if (completed) return;
-    const newAnswers = { ...answers, [current.id]: value };
-    setAnswers(newAnswers);
-    // 600ms 后切到下一题 (让信号卡片先浮现)
-    setTimeout(() => {
-      if (currentIdx < total - 1) {
-        setCurrentIdx(i => i + 1);
+  function pick(v: string) {
+    if (q.multi) {
+      setAns((a) => {
+        const cur = a[q.id];
+        return { ...a, [q.id]: cur.includes(v) ? cur.filter((x) => x !== v) : [...cur, v] };
+      });
+    } else {
+      setAns((a) => ({ ...a, [q.id]: [v] }));
+      setTimeout(next, 240);
+    }
+  }
+
+  function next() {
+    if (q.text) {
+      if (idx < SURVEY_QUESTIONS.length - 1) {
+        setIdx(idx + 1);
       } else {
-        // 全部答完, 计算画像 + 弹出报告
-        // 用 setTimeout 推迟一帧, 确保最后一题的信号已浮现
-        setTimeout(() => {
-          import("@/lib/survey-questions").then(({ computePrimaryProfile }) => {
-            const p = computePrimaryProfile(newAnswers as SurveyAnswers);
-            setProfile(p);
-            setCompleted(true);
-          });
-        }, 200);
+        finish();
       }
-    }, 600);
-  };
+      return;
+    }
+    if (ans[q.id].length === 0) return;
+    if (idx < SURVEY_QUESTIONS.length - 1) setIdx(idx + 1);
+    else finish();
+  }
 
-  const handlePrev = () => {
-    if (currentIdx > 0) setCurrentIdx(i => i - 1);
-  };
+  function back() {
+    setIdx(Math.max(0, idx - 1));
+  }
 
-  const handleNext = () => {
-    if (currentIdx < total - 1) setCurrentIdx(i => i + 1);
-  };
+  function finish() {
+    const payload = { ...ans, q6_text: free };
+    setReport(computeProfile(payload));
+  }
 
-  const reset = useCallback(() => {
-    setAnswers({});
-    setCurrentIdx(0);
-    setCompleted(false);
-    setProfile(null);
-  }, []);
+  function reset() {
+    setReport(null);
+    setStarted(false);
+    setIdx(0);
+    setAns(EMPTY);
+    setFree("");
+  }
 
-  // 键盘导航: 1-4 数字键快速选择
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (completed) return;
-      const num = parseInt(e.key);
-      if (num >= 1 && num <= current.options.length) {
-        handleSelect(current.options[num - 1].value);
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [currentIdx, completed, current]);
-
-  return (
-    <section
-      id="survey-start"
-      ref={containerRef}
-      className="relative min-h-screen flex items-center justify-center overflow-hidden py-12 px-4 sm:px-8"
-    >
-      {/* 背景漂浮粒子 (弱化, 让深色系漂浮感保留) */}
-      <FloatingDots />
-
-      {/* 顶部进度条 */}
-      <div className="fixed top-16 left-0 right-0 z-20 px-4 sm:px-8">
-        <div className="mx-auto max-w-3xl">
-          <div className="flex items-center justify-between mb-2 text-xs text-zinc-400">
-            <span>第 {Math.min(currentIdx + 1, total)} 题 / 共 {total} 题</span>
-            <span className="text-gold-300">{Math.round(progress)}%</span>
-          </div>
-          <div className="h-1 rounded-full bg-white/5 overflow-hidden">
-            <motion.div
-              className="h-full"
-              style={{
-                background: "linear-gradient(90deg, #d4a64a 0%, #fde9b8 100%)",
-              }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            />
-          </div>
+  if (done && report) {
+    return (
+      <div id="diagnose" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+        <div className="mx-auto max-w-shell px-5 sm:px-8">
+          <SectionMark en="Initial Report" cn="初级诊断报告" n="GEN" />
+          <ReportPanel profile={report} onReset={reset} />
         </div>
       </div>
+    );
+  }
 
-      {/* 左侧信号反馈 (sticky, 漂浮卡) */}
-      <aside className="hidden lg:block fixed left-8 top-32 w-64 z-10 pointer-events-none">
-        <SignalPanel signals={signals} answeredCount={Object.keys(answers).length} total={total} />
-      </aside>
+  return (
+    <section id="diagnose" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+      <div className="mx-auto max-w-shell px-5 sm:px-8">
+        <SectionMark en="Free Diagnosis" cn="免费诊断" n="04" />
 
-      {/* 右侧浮动 meta (深空粒子区) */}
-      <aside className="hidden lg:block fixed right-8 top-32 w-56 z-10 pointer-events-none">
-        <MetaCard />
-      </aside>
+        <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.14] mb-[clamp(20px,3vw,32px)] text-[clamp(28px,5.4vw,60px)]">
+          先看看，
+          <br />
+          你到底<em className="em-gold">处在什么位置</em>
+        </h2>
+        <p className="text-[15px] sm:text-[19px] leading-[2.05] text-paper/40 max-w-[52ch] mb-[clamp(48px,7vw,86px)]">
+          多数高收入家庭的资产状况，从未被系统看过一次。
+          <br />
+          6 道题，2 分钟 —— 包括你最该先处理的那一件事。
+        </p>
 
-      {/* 中央题目区 */}
-      <div className="relative z-10 w-full max-w-3xl">
-        {!completed && (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              transition={{ duration: 0.45 }}
-              className="glass rounded-3xl p-8 sm:p-12 relative overflow-hidden"
+        {!started ? (
+          <div className="hair-t hair-b max-w-[820px] mx-auto py-[clamp(50px,8vw,100px)] px-6 sm:px-14 text-center">
+            <div className="font-display text-[clamp(52px,9vw,96px)] leading-none text-gold-500 mb-6 sm:mb-9 animate-pulse-soft">
+              ◎
+            </div>
+            <h3 className="text-[clamp(20px,3vw,30px)] text-paper font-normal mb-4 sm:mb-6">
+              你的第一次资产体检
+            </h3>
+            <p className="text-[15px] sm:text-[19px] leading-[1.8] text-paper/40 max-w-[52ch] mx-auto mb-7 sm:mb-9">
+              6 道题，覆盖{" "}
+              <em className="em-gold">Alpha 偏好 / 资源贡献 / 人脉位置 / 风险姿态 / 服务期望</em> 五个维度。
+            </p>
+            <button
+              onClick={() => setStarted(true)}
+              className="btn-line btn-line-solid px-9 sm:px-10 py-4 sm:py-[18px] text-[13px] sm:text-[15px] min-h-[52px]"
             >
-              {/* 角标: 题号 */}
-              <div className="absolute top-6 right-6 text-xs tracking-widest text-zinc-600">
-                {String(currentIdx + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+              <span className="relative z-[2]">开始诊断</span>
+            </button>
+            <div className="mt-5 text-[12px] tracking-[0.04em] text-paper/20">
+              无需注册 · 不收集身份信息 · 报告不会被转发
+            </div>
+          </div>
+        ) : (
+          <div className="max-w-[820px] mx-auto">
+            {/* progress */}
+            <div className="flex items-center justify-between gap-5 pb-4 hair-b mb-[clamp(34px,5vw,56px)]">
+              <span className="font-display italic text-[13px] tracking-[0.2em] text-paper/25 whitespace-nowrap">
+                QUESTION {q.n}
+              </span>
+              <div className="flex-1 min-w-[60px] flex gap-1">
+                {SURVEY_QUESTIONS.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`flex-1 h-px transition-colors duration-500 ${
+                      i <= idx ? "bg-gold-500" : "bg-gold-500/20"
+                    }`}
+                  />
+                ))}
+              </div>
+              <span className="font-display italic text-[13px] tracking-[0.2em] text-paper/25 whitespace-nowrap">
+                {String(idx + 1).padStart(2, "0")} / 06
+              </span>
+            </div>
+
+            <div className="min-h-[440px] flex flex-col">
+              <div className="font-display italic text-[clamp(26px,4.4vw,44px)] leading-none text-gold-500 tracking-[0.06em] mb-5 sm:mb-7">
+                {q.n}
+              </div>
+              <h3 className="font-normal tracking-[-0.005em] text-paper leading-[1.5] mb-3 text-[clamp(21px,3.4vw,34px)]">
+                {q.title}
+              </h3>
+              <div className="text-[13px] sm:text-[15px] text-paper/25 mb-7 sm:mb-11">
+                {q.subtitle}
+                {q.multi && <span className="ml-2">（可多选）</span>}
               </div>
 
-              <h2 className="text-3xl sm:text-4xl font-display text-zinc-100 font-medium leading-tight">
-                {current.title}
-              </h2>
-              {current.subtitle && (
-                <p className="mt-3 text-zinc-500 text-sm sm:text-base">{current.subtitle}</p>
-              )}
-
-              {/* 选项 */}
-              <div className="mt-8 space-y-3">
-                {current.options.map((opt, i) => {
-                  const isSelected = answers[current.id] === opt.value;
-                  return (
-                    <motion.button
-                      key={opt.value}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.1 + i * 0.06 }}
-                      onClick={() => handleSelect(opt.value)}
-                      className={`opt-card w-full text-left rounded-xl px-5 py-4 border bg-white/[0.02] flex items-center gap-4 group ${
-                        isSelected
-                          ? "selected border-gold-500/70 bg-gold-500/10"
-                          : "border-white/10 hover:border-gold-500/40"
-                      }`}
-                    >
-                      <span
-                        className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-medium transition ${
-                          isSelected
-                            ? "border-gold-500 bg-gold-500/20 text-gold-300"
-                            : "border-white/15 text-zinc-500 group-hover:border-gold-500/40"
+              {q.text ? (
+                <textarea
+                  value={free}
+                  onChange={(e) => setFree(e.target.value)}
+                  placeholder={q.placeholder}
+                  rows={5}
+                  className="w-full bg-transparent border-b border-gold-500/30 text-paper text-[16px] sm:text-[20px] leading-[1.85] py-3.5 px-0.5 resize-none outline-none focus:border-gold-500 min-h-[170px] placeholder:text-paper/20 placeholder:italic placeholder:font-display"
+                />
+              ) : (
+                <div className="hair-t">
+                  {q.options?.map((o) => {
+                    const on = ans[q.id].includes(o.value);
+                    return (
+                      <button
+                        key={o.value}
+                        onClick={() => pick(o.value)}
+                        className={`hair-b w-full text-left flex items-center gap-4 sm:gap-5 py-4 sm:py-5 px-1 min-h-[56px] sm:min-h-[60px] transition-all duration-300 ${
+                          on ? "text-gold-300 pl-4 sm:pl-[18px]" : "text-paper/40 hover:text-paper hover:pl-4 sm:hover:pl-[18px]"
                         }`}
                       >
-                        {i + 1}
-                      </span>
-                      <span className={`flex-1 text-base ${isSelected ? "text-zinc-100" : "text-zinc-300"}`}>
-                        {opt.label}
-                      </span>
-                      {isSelected && (
-                        <motion.span
-                          initial={{ scale: 0, rotate: -90 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          className="text-gold-300"
+                        <span
+                          className={`w-[15px] h-[15px] shrink-0 relative border transition-all duration-300 ${
+                            q.multi ? "rounded-[2px]" : "rounded-full"
+                          } ${on ? "border-gold-500 shadow-[0_0_0_4px_rgba(184,149,106,0.1)]" : "border-gold-500/30"}`}
                         >
-                          ✓
-                        </motion.span>
-                      )}
-                    </motion.button>
-                  );
-                })}
-              </div>
-
-              {/* 快捷键提示 */}
-              <div className="mt-8 flex items-center justify-between text-xs text-zinc-600">
-                <span>
-                  快捷键: 按 <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 mx-1">1</kbd>-
-                  <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 mx-1">{current.options.length}</kbd>
-                  选择
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={handlePrev}
-                    disabled={currentIdx === 0}
-                    className="px-3 py-1.5 rounded-lg border border-white/10 disabled:opacity-30 hover:border-gold-500/40 transition"
-                  >
-                    ← 上一题
-                  </button>
-                  <button
-                    onClick={handleNext}
-                    disabled={!answers[current.id]}
-                    className="px-3 py-1.5 rounded-lg border border-white/10 disabled:opacity-30 hover:border-gold-500/40 transition"
-                  >
-                    下一题 →
-                  </button>
+                          <span
+                            className={`absolute inset-[3px] bg-gold-500 transition-transform duration-300 ${
+                              q.multi ? "rounded-[1px]" : "rounded-full"
+                            } ${on ? "scale-100" : "scale-0"}`}
+                          />
+                        </span>
+                        <span className="text-[15px] sm:text-[18px] leading-[1.6]">{o.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
+              )}
+
+              <div className="hair-t mt-[clamp(30px,4vw,48px)] pt-[clamp(20px,3vw,30px)] flex items-center justify-between gap-4 flex-wrap">
+                <button
+                  onClick={back}
+                  className="text-[12px] tracking-[0.12em] text-paper/25 hover:text-gold-300 transition-colors min-h-[40px] px-1"
+                >
+                  {idx > 0 ? "上一题" : "返回"}
+                </button>
+                {!q.text && ans[q.id].length > 0 && q.multi && (
+                  <span className="text-[12px] tracking-[0.12em] text-paper/20">
+                    {ans[q.id].length} 项已选
+                  </span>
+                )}
+                <button
+                  onClick={next}
+                  className="btn-line px-6 py-2.5 text-[12px] min-h-[42px]"
+                >
+                  <span className="relative z-[2]">
+                    {idx === SURVEY_QUESTIONS.length - 1 ? "完成诊断" : "下一题"}
+                  </span>
+                </button>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </div>
+          </div>
         )}
       </div>
-
-      {/* 报告弹层 (Apple Health 风) */}
-      <AnimatePresence>
-        {completed && profile && (
-          <ReportPanel
-            profile={profile}
-            answers={answers as SurveyAnswers}
-            onClose={reset}
-          />
-        )}
-      </AnimatePresence>
     </section>
-  );
-}
-
-/* ---------------- 信号面板 (左侧) ---------------- */
-function SignalPanel({
-  signals,
-  answeredCount,
-  total,
-}: { signals: string[]; answeredCount: number; total: number }) {
-  return (
-    <motion.div
-      layout
-      className="glass rounded-2xl p-5 pointer-events-auto"
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-xs tracking-widest text-gold-300 uppercase">实时信号</span>
-        <span className="text-xs text-zinc-500">{answeredCount}/{total}</span>
-      </div>
-      <div className="space-y-2 min-h-[120px]">
-        <AnimatePresence mode="popLayout">
-          {signals.length === 0 ? (
-            <motion.p
-              key="empty"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-zinc-600 text-xs italic"
-            >
-              回答第一题, 实时捕捉您的投资信号...
-            </motion.p>
-          ) : (
-            signals.slice(-5).map((s, i) => (
-              <motion.div
-                key={`${s}-${i}`}
-                initial={{ opacity: 0, x: 20, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ delay: i * 0.04 }}
-                className="text-xs text-zinc-200 flex items-start gap-2"
-              >
-                <span className="w-1 h-1 mt-1.5 rounded-full bg-gold-300 animate-glow shrink-0" />
-                <span>{s}</span>
-              </motion.div>
-            ))
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ---------------- Meta 卡 (右侧漂浮) ---------------- */
-function MetaCard() {
-  return (
-    <motion.div
-      animate={{ y: [0, -8, 0, 8, 0] }}
-      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-      className="glass rounded-2xl p-5 text-xs"
-    >
-      <p className="text-zinc-400 mb-2">Astor Agent 状态</p>
-      <div className="flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-neon-cyan animate-glow" />
-        <span className="text-zinc-200">在线 · 待命</span>
-      </div>
-      <p className="mt-3 text-zinc-500 leading-relaxed">
-        每答一题, AstorAgent 都会更新对您的理解。
-      </p>
-    </motion.div>
-  );
-}
-
-/* ---------------- 背景漂浮粒子 (CSS only) ---------------- */
-function FloatingDots() {
-  return (
-    <div className="particle-canvas" aria-hidden>
-      {Array.from({ length: 30 }).map((_, i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            width: 2 + Math.random() * 4,
-            height: 2 + Math.random() * 4,
-            background: ["#d4a64a", "#7ee6e9", "#a78bfa", "#fb7185"][i % 4],
-            opacity: 0.3 + Math.random() * 0.4,
-          }}
-          animate={{
-            y: [0, -20 - Math.random() * 15, 0, 20 + Math.random() * 10, 0],
-            x: [0, 15, 0, -15, 0],
-          }}
-          transition={{
-            duration: 10 + Math.random() * 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: Math.random() * 4,
-          }}
-        />
-      ))}
-    </div>
   );
 }

@@ -16,7 +16,7 @@ export const runtime = "nodejs";
 const REPLY = (q: string): string => {
   const t = q.toLowerCase();
   if (t.includes("红") || t.includes("red")) {
-    return "合规红线: 任何收益/保本/绝对化表述都需重写为中性风险描述, 详见 packages/compliance/redline.ts";
+    return "合规红线: 任何收益/兜底承诺/绝对化表述都需重写为中性风险描述, 详见 packages/compliance/redline.ts";
   }
   if (t.includes("管") || t.includes("rbac") || t.includes("权限")) {
     return "RBAC 五级 L1-L5, ADMIN/MASTER 旁路。中间件位置: middleware.ts → requireRole。";

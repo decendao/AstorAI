@@ -1,137 +1,141 @@
-"use client";
+import { SectionMark, Btn } from "@/components/ui/Editorial";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { PRICING, formatCents } from "@/lib/pricing";
+const L1 = [
+  { t: "五维画像", d: "认知 / 资源 / 圈层 / 风险 / 服务" },
+  { t: "标准化研究输出", d: "宏观、行业、配置框架" },
+  { t: "条款深度解读", d: "上传说明书，输出结构与风险点" },
+  { t: "每日早报", d: "与你的持仓逻辑关联" },
+  { t: "联盟社区", d: "讨论、提问、同频交流" },
+  { t: "公开议题局名额", d: "定期开放部分席位" },
+];
 
-/**
- * 定价区 —— 简洁双卡
- * ¥99/月 · ¥999/年 (限时)
- * 突出年付折扣 + 7 天免费试用 (无信用卡)
- */
+const L2 = [
+  { t: "L1 全部权益", d: "不限次数的深度对话与研究", hi: false },
+  { t: "季度深度复诊", d: "重新校准画像与配置思路", hi: false },
+  { t: "闭门议题局", d: "每月一场，仅限受邀，不公开录播", hi: false },
+  { t: "闭门私享会", d: "与同量级参与者的深度交流", hi: false },
+  { t: "专业资源优先对接", d: "律师 / 税务师（仅信息引荐）", hi: false },
+  { t: "前沿议题参与权", d: "国际智库与头部投资机构闭门交流", hi: true },
+  { t: "跨境与全球视角", d: "海外资产与身份议题专门场", hi: true },
+];
+
+function Plan({
+  tag,
+  name,
+  price,
+  sub,
+  feats,
+  cta,
+  hot,
+}: {
+  tag: string;
+  name: string;
+  price: string;
+  sub: string;
+  feats: { t: string; d: string; hi?: boolean }[];
+  cta: string;
+  hot?: boolean;
+}) {
+  return (
+    <div className={`pt-[clamp(30px,4vw,48px)] ${hot ? "border-t border-gold-500" : "border-t border-hair"}`}>
+      <div className={`font-display italic text-[12.5px] tracking-[0.22em] mb-4 ${hot ? "text-gold-500" : "text-paper/25"}`}>
+        {tag}
+      </div>
+      <div className="text-[clamp(21px,2.8vw,30px)] text-paper font-normal mb-[clamp(20px,2.5vw,28px)]">
+        {name}
+      </div>
+      <div className="flex items-baseline gap-2 mb-2.5">
+        <span className="font-display font-normal text-[clamp(46px,8vw,88px)] leading-none text-gold-500 tracking-[-0.02em]">
+          {price}
+        </span>
+        <span className="text-[13px] tracking-[0.08em] text-paper/25">/ 月</span>
+      </div>
+      <div className="text-[13.5px] leading-[1.8] text-paper/25 pb-[clamp(22px,3vw,30px)] hair-b mb-[clamp(22px,3vw,30px)]">
+        {sub}
+      </div>
+      <div className="mb-[clamp(26px,3.5vw,36px)]">
+        {feats.map((f) => (
+          <div
+            key={f.t}
+            className="hair-b py-3 pl-6 relative text-[clamp(14px,1.7vw,16px)] leading-[1.75] text-paper/40"
+          >
+            <span className="absolute left-0 top-[19px] w-[5px] h-[5px] bg-gold-500 rotate-45" />
+            <span className={f.hi ? "text-gold-500 font-medium" : "text-paper font-medium"}>
+              {f.t}
+            </span>{" "}
+            — {f.d}
+          </div>
+        ))}
+      </div>
+      <Btn href={hot ? "#cta" : "#diagnose"} solid={hot} className="w-full">
+        {cta}
+      </Btn>
+    </div>
+  );
+}
+
 export function PricingSection() {
   return (
-    <section id="pricing" className="relative py-24 px-4 sm:px-8">
-      <div className="mx-auto max-w-5xl">
-        <div className="text-center mb-14">
-          <p className="text-xs tracking-[0.3em] text-gold-300 uppercase mb-3">
-            统一价 · 限时年付
+    <section id="pricing" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+      <div className="mx-auto max-w-shell px-5 sm:px-8">
+        <SectionMark en="Pricing" cn="两级订阅" n="08" />
+
+        <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.14] mb-[clamp(48px,7vw,90px)] text-[clamp(28px,5.4vw,60px)]">
+          想系统提升认知的人，
+          <br />
+          应该能<em className="em-gold">轻松进来</em>。
+          <br />
+          需要圈层的人，应当拿到<em className="em-gold">真正稀缺</em>的入口。
+        </h2>
+
+        <div className="grid md:grid-cols-2 gap-[clamp(30px,4vw,48px)] max-w-[1080px] mx-auto">
+          <Plan tag="L1 · 开放申请" name="会员" price="¥100" sub="零资产门槛，无最低消费，随时可停" feats={L1} cta="免费诊断 →" />
+          <Plan tag="L2 · 邀请制" name="核心会员" price="¥1,000" sub="可投资资产 600 万以上 · 需身份与资质审核" feats={L2} cta="申请 L2 资格" hot />
+        </div>
+
+        {/* boundary */}
+        <div className="border-y border-gold-500/30 max-w-[900px] mx-auto mt-[clamp(40px,6vw,70px)] py-[clamp(28px,4vw,44px)] text-center">
+          <div className="font-display italic text-[12.5px] tracking-[0.22em] text-gold-500 mb-5">
+            Service Boundary · 服务边界
+          </div>
+          <p className="text-[clamp(14px,1.7vw,16.5px)] leading-[2.05] text-paper/40 max-w-[76ch] mx-auto">
+            AstorAI 定位为<b className="text-paper font-medium">投资者画像诊断与圈层信息服务</b>，不构成投资建议，
+            不涉及产品分销、代客理财与资产管理。
+            <br />
+            任何投资决策请咨询具备相应资质的持牌机构。
           </p>
-          <h2 className="text-4xl sm:text-5xl font-display text-gold-gradient font-medium">
-            简单定价, 不玩套路
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function CtaSection() {
+  return (
+    <section id="cta" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+      <div className="mx-auto max-w-shell px-5 sm:px-8">
+        <div className="max-w-[840px] mx-auto text-center py-[clamp(50px,8vw,110px)]">
+          <div className="font-display text-[clamp(48px,8vw,88px)] leading-none text-gold-500 mb-7 sm:mb-8">
+            ◎
+          </div>
+          <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.2] mb-6 sm:mb-7 text-[clamp(28px,5.4vw,60px)]">
+            先诊断，<em className="em-gold">再配置</em>
           </h2>
-          <p className="mt-4 text-zinc-400">
-            个人与企业统一 ¥99/月, 限时年付 <strong className="text-gold-300">¥999</strong> (省 ¥189)
+          <p className="text-[clamp(15px,1.8vw,19px)] leading-[1.95] text-paper/40 max-w-[52ch] mx-auto mb-8 sm:mb-10">
+            因为自我认知会复利。
+            <br />
+            而每一位严肃的投资者，都值得一面诚实的镜子。
           </p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* 月度卡 */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="glass rounded-2xl p-7 flex flex-col"
-          >
-            <div className="flex items-baseline justify-between mb-1">
-              <h3 className="text-xl text-zinc-100 font-medium">月度订阅</h3>
-              <span className="text-xs text-zinc-500">灵活</span>
-            </div>
-            <div className="mt-4 flex items-baseline gap-1">
-              <span className="text-5xl text-gold-gradient font-display font-medium">
-                {formatCents(PRICING.monthly.priceCents)}
-              </span>
-              <span className="text-zinc-500">/ 月</span>
-            </div>
-            <p className="mt-2 text-xs text-zinc-500">随时取消, 按月计费</p>
-
-            <ul className="mt-6 space-y-3 flex-1">
-              {PRICING.monthly.features.map(f => (
-                <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
-                  <span className="text-gold-300 mt-0.5">✓</span>
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              href={`/register?trial=1&plan=monthly`}
-              className="btn-ghost mt-8 rounded-xl px-6 py-3.5 text-center"
-            >
-              {PRICING.monthly.cta}
-            </Link>
-            <p className="mt-2 text-center text-xs text-zinc-600">
-              7 天免费 · 无需信用卡
-            </p>
-          </motion.div>
-
-          {/* 年度卡 (突出) */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="glass-strong rounded-2xl p-7 flex flex-col relative overflow-hidden"
-          >
-            {/* 角标 */}
-            <div className="absolute top-4 right-4">
-              <span className="px-3 py-1 rounded-full text-xs bg-gold-500/20 border border-gold-500/40 text-gold-300">
-                {PRICING.yearly.badge}
-              </span>
-            </div>
-
-            <div className="flex items-baseline justify-between mb-1">
-              <h3 className="text-xl text-zinc-100 font-medium">年度订阅 · 限时</h3>
-              <span className="text-xs text-gold-300">推荐</span>
-            </div>
-            <div className="mt-4 flex items-baseline gap-2">
-              <span className="text-5xl text-gold-gradient font-display font-medium">
-                {formatCents(PRICING.yearly.priceCents)}
-              </span>
-              <span className="text-zinc-500">/ 年</span>
-              <span className="text-sm text-zinc-500 line-through ml-2">
-                {formatCents(PRICING.yearly.originalPriceCents)}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-gold-300">
-              立省 {formatCents(PRICING.yearly.savingCents)} · 折合 ¥83 / 月
-            </p>
-
-            <ul className="mt-6 space-y-3 flex-1">
-              {PRICING.yearly.features.map(f => (
-                <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
-                  <span className="text-gold-300 mt-0.5">✓</span>
-                  <span>{f}</span>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              href={`/register?trial=1&plan=yearly`}
-              className="btn-gold mt-8 rounded-xl px-6 py-3.5 text-center"
-            >
-              {PRICING.yearly.cta} →
-            </Link>
-            <p className="mt-2 text-center text-xs text-zinc-500">
-              含 7 天免费试用 · 到期前 3 天邮件提醒
-            </p>
-          </motion.div>
-        </div>
-
-        {/* FAQ 简化 */}
-        <div className="mt-16 grid sm:grid-cols-3 gap-4 text-sm text-zinc-400">
-          <div className="glass rounded-xl p-4">
-            <p className="text-zinc-200 font-medium mb-1">需要信用卡吗?</p>
-            <p>不需要, 7 天试用结束后再选择是否付费。</p>
+          <div className="flex flex-wrap gap-3.5 justify-center">
+            <Btn href="#diagnose" solid lg>
+              免费获取我的财富诊断
+            </Btn>
+            <Btn href="#capability" lg>
+              了解 AstorAI 如何工作
+            </Btn>
           </div>
-          <div className="glass rounded-xl p-4">
-            <p className="text-zinc-200 font-medium mb-1">发票怎么开?</p>
-            <p>注册后于个人中心申请, 我们提供电子发票。</p>
-          </div>
-          <div className="glass rounded-xl p-4">
-            <p className="text-zinc-200 font-medium mb-1">支持退款吗?</p>
-            <p>订阅 7 天内未使用核心功能可全额退款。</p>
+          <div className="mt-5 text-[12px] tracking-[0.04em] text-paper/20">
+            7 天试用不绑定支付方式 · 随时可停
           </div>
         </div>
       </div>

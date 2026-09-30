@@ -1,46 +1,47 @@
-import Link from "next/link";
-
 export function SiteFooter() {
+  const cols = [
+    { k: "PRODUCT", l: ["免费诊断", "财富诊断", "全景统筹", "陪伴服务"] },
+    { k: "ALLIANCE", l: ["3A 投资者联盟", "闭门议题局", "闭门私享会", "L2 邀请申请"] },
+    { k: "BOUNDARY", l: ["不荐股", "不交易", "不承诺收益", "不代客理财"] },
+  ];
+
   return (
-    <footer className="relative border-t border-white/5 mt-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-8 py-12">
-        <div className="grid sm:grid-cols-4 gap-8 text-sm">
-          <div className="sm:col-span-2">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-gold-500/15 border border-gold-500/40 flex items-center justify-center text-gold-300 font-display">
-                A
-              </div>
-              <span className="font-display text-lg">Astor AI</span>
+    <footer className="hair-t relative z-10">
+      <div className="mx-auto max-w-shell px-5 sm:px-8 py-14 sm:py-20">
+        <div className="grid gap-8 sm:gap-12 grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
+          <div>
+            <div className="font-display text-[22px] tracking-[0.1em] text-gold-500 mb-3">
+              AAA
             </div>
-            <p className="text-zinc-500 leading-relaxed max-w-md">
-              智能投研副驾, 让 AI 成为您下一个投资决策的协同者。
-              由 3A 投资者联盟出品。
-            </p>
+            <div className="text-[13.5px] leading-[2.1] text-paper/25">
+              AstorAI 财富智能体
+              <br />
+              3A Investors Alliance
+              <br />
+              Est. MMXXVI · Shanghai
+            </div>
           </div>
 
-          <div>
-            <p className="text-zinc-200 font-medium mb-3">产品</p>
-            <ul className="space-y-2 text-zinc-500">
-              <li><Link href="/agent" className="hover:text-zinc-300">AstorAgent</Link></li>
-              <li><Link href="#survey-start" className="hover:text-zinc-300">画像诊断</Link></li>
-              <li><Link href="#pricing" className="hover:text-zinc-300">价格</Link></li>
-              <li><Link href="/docs" className="hover:text-zinc-300">API 文档</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-zinc-200 font-medium mb-3">合规</p>
-            <ul className="space-y-2 text-zinc-500">
-              <li><Link href="/terms" className="hover:text-zinc-300">用户协议</Link></li>
-              <li><Link href="/privacy" className="hover:text-zinc-300">隐私政策</Link></li>
-              <li><Link href="/compliance" className="hover:text-zinc-300">合规声明</Link></li>
-            </ul>
-          </div>
+          {cols.map((c) => (
+            <div key={c.k}>
+              <div className="text-[11.5px] tracking-[0.22em] text-gold-500 mb-4">
+                {c.k}
+              </div>
+              <div className="text-[13.5px] leading-[2.1] text-paper/25">
+                {c.l.map((x) => (
+                  <div key={x}>{x}</div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
 
-        <div className="mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-zinc-600">
-          <p>© 2026 Astor AI · 浙 ICP 备 20xxxxxxx 号 · 等保二级</p>
-          <p>投资有风险, 决策需谨慎。本平台所有内容仅供参考, 不构成投资建议。</p>
+        <div className="hair-t pt-7 sm:pt-9 text-[11.5px] leading-[2] text-paper/[0.22]">
+          <div className="block text-paper/35 tracking-[0.22em] mb-3">DISCLAIMER</div>
+          AstorAI 为信息咨询与投资者教育服务提供方，运营主体不具备任何证券投资咨询、基金销售、资产管理等业务资质。本网站所载内容均为研究观点与一般性信息，不构成投资建议、要约或承诺，不构成对任何产品收益的保证。
+          <br />
+          <br />
+          任何涉及投资决策的判断，请咨询具备相应资质的持牌机构。任何投资行为前，请充分了解相关产品的风险特征，并根据自身风险承受能力审慎决策。市场有风险，投资需谨慎。
         </div>
       </div>
     </footer>

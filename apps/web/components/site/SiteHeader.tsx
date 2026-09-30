@@ -1,44 +1,44 @@
-import Link from "next/link";
+"use client";
 
-/**
- * 顶部导航栏
- * - 品牌 + 主导航 + 试用 CTA
- * - 滚动时增加玻璃背景 (sticky)
- */
+import Link from "next/link";
+import { Btn } from "@/components/ui/Editorial";
+
+const NAV = [
+  { href: "#manifesto", label: "为什么" },
+  { href: "#believe", label: "我们相信" },
+  { href: "#diagnose", label: "诊断" },
+  { href: "#audit", label: "可信" },
+  { href: "#pricing", label: "定价" },
+  { href: "/insights", label: "洞察" },
+];
+
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b border-white/5 backdrop-blur-md bg-ink-950/60">
-      <div className="mx-auto max-w-6xl px-4 sm:px-8 h-16 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gold-500/15 border border-gold-500/40 flex items-center justify-center text-gold-300 font-display font-medium">
-            A
-          </div>
-          <span className="font-display text-lg tracking-wide">
-            Astor <span className="text-gold-300">AI</span>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-ink-900/55 backdrop-blur-[22px] border-b border-gold-500/[0.14]">
+      <div className="mx-auto max-w-shell px-5 sm:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-5">
+        <Link href="/" className="flex items-baseline gap-3 min-w-0 shrink-0">
+          <span className="font-display text-[17px] tracking-[0.15em] text-gold-500">AAA</span>
+          <span className="text-[13.5px] tracking-[0.14em] text-paper whitespace-nowrap">
+            AstorAI
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-300">
-          <Link href="#survey-start" className="link-gold">诊断</Link>
-          <Link href="#capabilities" className="link-gold">能力</Link>
-          <Link href="#demo" className="link-gold">体验</Link>
-          <Link href="#pricing" className="link-gold">价格</Link>
-          <Link href="/agent" className="link-gold">AstorAgent</Link>
+        <nav className="hidden lg:flex items-center gap-8">
+          {NAV.map((n) => (
+            <a
+              key={n.href}
+              href={n.href}
+              className="relative text-[12px] tracking-[0.1em] text-paper/35 hover:text-gold-300 transition-colors duration-300 after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-0 after:bg-gold-500 hover:after:w-full after:transition-all after:duration-300"
+            >
+              {n.label}
+            </a>
+          ))}
         </nav>
 
-        <div className="flex items-center gap-2">
-          <Link
-            href="/login"
-            className="hidden sm:inline-block text-sm text-zinc-400 hover:text-zinc-200 transition px-3 py-1.5"
-          >
-            登录
-          </Link>
-          <Link
-            href="/register?trial=1"
-            className="btn-gold rounded-lg px-4 py-2 text-sm"
-          >
-            免费试用
-          </Link>
+        <div className="shrink-0">
+          <Btn href="#diagnose" className="!px-5 !py-2.5 !text-[12px] !min-h-[40px]">
+            免费诊断
+          </Btn>
         </div>
       </div>
     </header>

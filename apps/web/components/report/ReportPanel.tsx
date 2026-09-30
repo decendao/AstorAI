@@ -1,301 +1,196 @@
 "use client";
 
-import { motion } from "framer-motion";
-import Link from "next/link";
-import {
-  RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar,
-  ResponsiveContainer,
-  RadialBarChart, RadialBar,
-} from "recharts";
-import {
-  type PrimaryProfile,
-  type SurveyAnswers,
-  SURVEY_QUESTIONS,
-} from "@/lib/survey-questions";
+import { useEffect, useState } from "react";
+import type { Profile } from "@/lib/survey-questions";
+import { Btn } from "@/components/ui/Editorial";
 
-/**
- * 初级画像报告 —— Apple Health 风
- * - 浅色背景 (反差营造洞察感)
- * - 大数字 + 圆环 + 留白 + 圆润字体
- * - 信息分层: 顶部 Hero metric → 雷达 → 标签 → CTA
- */
+const R = 54;
+const C = 2 * Math.PI * R;
+
+const DEEP_MODULES = [
+  { k: "需完整问卷", t: "资产集中度测算", d: "跨机构敞口 · 相关性 · 币种错配" },
+  { k: "需季度复诊", t: "现金流压力测试", d: "负债 / 收入 / 支出 / 目标的时间轴匹配" },
+  { k: "需 L2 邀请制", t: "管理人适配度分析", d: "按你的风险姿态与风格偏好匹配管理人" },
+  { k: "需 L2 邀请制", t: "圈层议题匹配", d: "按画像匹配闭门议题局与私享会" },
+];
+
 export function ReportPanel({
   profile,
-  answers,
-  onClose,
+  onReset,
 }: {
-  profile: PrimaryProfile;
-  answers: SurveyAnswers;
-  onClose: () => void;
+  profile: Profile;
+  onReset: () => void;
 }) {
-  const radarData = Object.entries(profile.dim).map(([k, v]) => ({
-    dim: k,
-    value: Math.round(v * 100),
-  }));
+  const [animate, setAnimate] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setAnimate(true), 120);
+    return () => clearTimeout(t);
+  }, []);
 
-  // 综合得分 (五维加权)
-  const overallScore = Math.round(
-    Object.values(profile.dim).reduce((s, v) => s + v, 0) / 5 * 100,
-  );
-
-  const sectorLabel = profile.recommendedSector;
-  const goalLabel = SURVEY_QUESTIONS.find(q => q.id === "goal")!
-    .options.find(o => o.value === answers.goal)?.label;
+  const healthLabel =
+    profile.health >= 75
+      ? "结构扎实"
+      : profile.health >= 55
+        ? "有基础，待整合"
+        : "存在明显缺口";
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="fixed inset-0 z-50 overflow-y-auto"
-      style={{
-        background:
-          "radial-gradient(ellipse at top, #fef9ed 0%, #f5f1e8 50%, #ebe5d6 100%)",
-      }}
-    >
-      <div className="min-h-screen px-4 sm:px-8 py-12">
-        <div className="mx-auto max-w-4xl">
-          {/* 顶部 Header */}
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex items-start justify-between mb-8"
-          >
-            <div>
-              <p className="text-xs tracking-[0.3em] text-amber-700 uppercase mb-2">
-                Astor AI · 初级画像报告
-              </p>
-              <h1 className="text-3xl sm:text-4xl font-display text-stone-900 font-medium">
-                您的投资画像
-              </h1>
-              <p className="mt-1 text-sm text-stone-500">
-                基于 6 题回答生成 · {new Date().toLocaleDateString("zh-CN")}
-              </p>
-            </div>
-            <button
-              onClick={onClose}
-              className="text-stone-400 hover:text-stone-700 w-10 h-10 rounded-full bg-white/60 border border-stone-200 flex items-center justify-center transition"
-              aria-label="关闭报告"
-            >
-              ✕
-            </button>
-          </motion.div>
+    <div className="animate-rise">
+      {/* hero */}
+      <div className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-14 text-center lg:text-left hair-b pb-10 sm:pb-16 mb-9 sm:mb-12">
+        <div className="relative w-[140px] h-[140px] sm:w-[190px] sm:h-[190px] shrink-0">
+          <svg viewBox="0 0 132 132" className="w-full h-full -rotate-90">
+            <circle cx="66" cy="66" r={R} fill="none" stroke="rgba(184,149,106,0.18)" strokeWidth="1" />
+            <circle
+              cx="66"
+              cy="66"
+              r={R}
+              fill="none"
+              stroke="#B8956A"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={C}
+              strokeDashoffset={animate ? C * (1 - profile.health / 100) : C}
+              style={{ transition: "stroke-dashoffset 1.8s cubic-bezier(.4,0,.2,1)" }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
+            <span className="font-display font-normal text-[48px] sm:text-[80px] leading-none text-gold-500 tracking-[-0.01em]">
+              {profile.health}
+            </span>
+            <span className="text-[10px] tracking-[0.24em] text-paper/25">HEALTH</span>
+          </div>
+        </div>
 
-          {/* Hero metric card —— 大数字 + 圆环 (Health 风核心) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl p-8 sm:p-10 shadow-sm border border-stone-200/60 mb-6"
-          >
-            <div className="grid sm:grid-cols-[1fr_auto] gap-8 items-center">
-              <div>
-                <p className="text-xs tracking-widest text-stone-500 uppercase mb-3">
-                  综合画像得分
-                </p>
-                <div className="flex items-baseline gap-3">
-                  <span className="text-7xl sm:text-8xl font-display text-amber-600 font-light tabular-nums">
-                    {overallScore}
-                  </span>
-                  <span className="text-2xl text-stone-400 font-light">/ 100</span>
-                </div>
-                <p className="mt-4 text-stone-700 leading-relaxed">
-                  您是一位 <strong className="text-stone-900">{profile.headline}</strong>
-                  , 关注 <strong className="text-stone-900">{sectorLabel}</strong>,
-                  主要目标为 <strong className="text-stone-900">{goalLabel}</strong>。
-                </p>
-
-                {/* 风险等级 + 标签 */}
-                <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <HealthBadge level={profile.riskLevel} />
-                  {profile.tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1.5 rounded-full text-xs bg-amber-50 border border-amber-200 text-amber-800"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* 圆环 (Health 标志性视觉) */}
-              <div className="relative">
-                <ScoreRing score={overallScore} />
-              </div>
-            </div>
-          </motion.div>
-
-          {/* 五维雷达 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-stone-200/60 mb-6"
-          >
-            <h3 className="text-lg text-stone-900 mb-1 font-medium">五维画像分布</h3>
-            <p className="text-xs text-stone-500 mb-6">
-              基于您 6 题回答, 各维度标准化得分 (0-100)
-            </p>
-            <ResponsiveContainer width="100%" height={280}>
-              <RadarChart data={radarData}>
-                <PolarGrid stroke="#e7e5e4" />
-                <PolarAngleAxis
-                  dataKey="dim"
-                  tick={{ fill: "#78716c", fontSize: 12 }}
-                />
-                <PolarRadiusAxis
-                  angle={90} domain={[0, 100]}
-                  tick={{ fill: "#a8a29e", fontSize: 10 }}
-                  stroke="#e7e5e4"
-                />
-                <Radar
-                  name="画像"
-                  dataKey="value"
-                  stroke="#d97706"
-                  fill="#d97706"
-                  fillOpacity={0.25}
-                  animationDuration={1800}
-                  strokeWidth={2}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-
-            {/* 维度数字 (Health 列表) */}
-            <div className="mt-4 grid grid-cols-2 sm:grid-cols-5 gap-3">
-              {radarData.map(d => (
-                <div key={d.dim} className="text-center py-2">
-                  <div className="text-2xl font-light text-stone-900 tabular-nums">
-                    {d.value}
-                  </div>
-                  <div className="text-xs text-stone-500 mt-1">{d.dim}</div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* 答卷概览 (Health 列表风) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="bg-white/80 backdrop-blur-md rounded-3xl p-8 shadow-sm border border-stone-200/60 mb-6"
-          >
-            <h3 className="text-lg text-stone-900 mb-4 font-medium">回答概览</h3>
-            <div className="divide-y divide-stone-200/60">
-              {SURVEY_QUESTIONS.map(q => {
-                const v = q.options.find(o => o.value === answers[q.id as keyof SurveyAnswers]);
-                return (
-                  <div key={q.id} className="flex items-center justify-between py-3">
-                    <span className="text-sm text-stone-500">{q.title.replace("?", "")}</span>
-                    <span className="text-sm text-stone-900 font-medium">{v?.label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          {/* 深度解锁 CTA —— Health 强提示 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.65 }}
-            className="bg-gradient-to-br from-amber-100 to-amber-50 rounded-3xl p-8 sm:p-10 shadow-sm border border-amber-200/60 mb-6"
-          >
-            <p className="text-xs tracking-widest text-amber-700 uppercase mb-2">
-              下一步
-            </p>
-            <h3 className="text-2xl sm:text-3xl text-stone-900 font-medium mb-4">
-              解锁 <strong className="text-amber-700">36 题深度诊断</strong>
-            </h3>
-
-            <ul className="space-y-3 text-sm text-stone-700 mb-6">
-              <li className="flex items-start gap-3">
-                <span className="text-amber-600 text-lg leading-none">•</span>
-                <span>基于您的赛道与周期, 推送 <strong>5 个个性化研究主题</strong></span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-amber-600 text-lg leading-none">•</span>
-                <span>AstorAgent 实时对话 (行情 / 政策 / 资金流向)</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-amber-600 text-lg leading-none">•</span>
-                <span>组合管理 + 风险预警 + 周报</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-amber-600 text-lg leading-none">•</span>
-                <span><strong className="text-amber-700">7 天免费试用</strong>, 无需信用卡</span>
-              </li>
-            </ul>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link
-                href={`/register?trial=1&sector=${answers.sector}&goal=${answers.goal}`}
-                className="flex-1 bg-stone-900 hover:bg-stone-800 text-white rounded-2xl px-6 py-4 text-center font-medium transition"
-              >
-                开始 7 天免费试用 →
-              </Link>
-              <Link
-                href={`/login`}
-                className="bg-white/70 hover:bg-white border border-stone-300 text-stone-900 rounded-2xl px-6 py-4 text-center font-medium transition"
-              >
-                已有账号 · 登录
-              </Link>
-            </div>
-          </motion.div>
-
-          {/* 合规 */}
-          <p className="text-xs text-stone-500 text-center px-4 pb-8">
-            * 本报告基于您提供的回答生成, 仅用于个性化推荐与研究参考,
-            不构成任何投资建议或承诺。投资有风险, 决策需谨慎。
-          </p>
+        <div className="lg:text-left min-w-0">
+          <div className="text-[11.5px] tracking-[0.2em] text-paper/25 mb-2.5">
+            Structure Health Index
+          </div>
+          <div className="text-[clamp(19px,2.4vw,26px)] text-paper mb-2.5">
+            {healthLabel}
+          </div>
+          <div className="text-[13.5px] leading-[1.8] text-paper/25 max-w-[33ch]">
+            基于 6 道题的自评。完整版需要 20 题问卷 + 季度复诊记录。
+          </div>
         </div>
       </div>
-    </motion.div>
-  );
-}
 
-/* ---------------- 综合得分圆环 (Health 标志) ---------------- */
-function ScoreRing({ score }: { score: number }) {
-  const data = [{ name: "score", value: score, fill: "#d97706" }];
-  return (
-    <div className="relative" style={{ width: 180, height: 180 }}>
-      <ResponsiveContainer width="100%" height="100%">
-        <RadialBarChart
-          data={data}
-          innerRadius="80%"
-          outerRadius="100%"
-          startAngle={90}
-          endAngle={90 - (score / 100) * 360}
+      {/* five dimensions */}
+      <div className="hair-t mb-[clamp(30px,4vw,48px)]">
+        {profile.dims.map((d) => (
+          <div
+            key={d.key}
+            className="hair-b grid grid-cols-[1fr_auto] sm:grid-cols-[minmax(140px,1.1fr)_1fr_auto] gap-3 sm:gap-9 items-center py-5 px-1 hover:bg-gold-500/[0.035] hover:pl-4 transition-all duration-300"
+          >
+            <div className="flex items-baseline gap-3 sm:gap-4">
+              <span className="font-display italic text-[13px] text-gold-500 w-5 shrink-0 tracking-[0.08em]">
+                {d.roman}
+              </span>
+              <span className="text-[14px] sm:text-[17px] text-paper whitespace-nowrap">
+                {d.cn}
+              </span>
+            </div>
+            <div className="hidden sm:block h-px bg-gold-500/20 relative">
+              <span
+                className={`absolute left-0 top-0 h-px bg-gold-500 ${animate ? "animate-bar-fill" : "w-0"}`}
+                style={animate ? { width: `${d.score}%` } : undefined}
+              />
+            </div>
+            <span className="font-display text-[17px] sm:text-[22px] text-gold-500 sm:text-right min-w-[34px]">
+              {d.score}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {/* risk posture */}
+      <div className="hair-t hair-b py-[clamp(30px,4.5vw,48px)] mb-[clamp(30px,4vw,48px)]">
+        <div className="font-display italic text-[13px] tracking-[0.2em] text-gold-500 mb-4">
+          Risk Posture
+        </div>
+        <div className="text-[clamp(22px,3.2vw,36px)] text-paper mb-4 sm:mb-5">
+          {profile.riskPosture}
+        </div>
+        <p className="text-[clamp(15px,1.8vw,18px)] leading-[2] text-paper/40 max-w-[76ch]">
+          {profile.riskNarrative}
+        </p>
+      </div>
+
+      {/* primary gap */}
+      <div className="hair-b pb-[clamp(34px,5vw,58px)] mb-[clamp(30px,4vw,48px)] pt-[clamp(34px,5vw,58px)]">
+        <div className="font-display italic text-[13px] tracking-[0.2em] text-gold-500 mb-4 sm:mb-5">
+          Primary Gap · 最需要先处理的一件事
+        </div>
+        <h3 className="font-normal tracking-[-0.005em] text-paper leading-[1.42] mb-5 sm:mb-6 text-[clamp(20px,3vw,34px)]">
+          {profile.primaryGap.title}
+        </h3>
+        <p className="text-[clamp(15px,1.8vw,18px)] leading-[2.05] text-paper/40 max-w-[78ch] mb-7 sm:mb-8">
+          {profile.primaryGap.detail}
+        </p>
+        <div className="border-t border-gold-500/30 pt-6 sm:pt-8">
+          <div className="text-[11.5px] tracking-[0.2em] text-gold-500 mb-2.5">
+            建议动作
+          </div>
+          <div className="text-[clamp(15px,1.9vw,19px)] leading-[1.85] text-paper max-w-[78ch]">
+            {profile.primaryGap.action}
+          </div>
+        </div>
+      </div>
+
+      {/* locked deep panel */}
+      <div className="hair-t hair-b relative overflow-hidden mb-[clamp(30px,4vw,48px)]">
+        <div className="py-[clamp(26px,3.5vw,40px)] blur-[6px] opacity-50 pointer-events-none select-none">
+          <div className="hair-t">
+            {DEEP_MODULES.map((d) => (
+              <div key={d.t} className="hair-b py-5 px-4 sm:px-7 grid sm:grid-cols-[1fr_auto] gap-3 sm:gap-6 items-center">
+                <div>
+                  <div className="text-[14.5px] text-paper mb-1">{d.t}</div>
+                  <div className="text-[12px] text-paper/25 mt-1">{d.d}</div>
+                </div>
+                <div className="font-display italic text-[15px] text-gold-500">
+                  {d.k}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 sm:px-12 py-[clamp(34px,5vw,60px)] bg-gradient-to-b from-ink-900/75 to-ink-900/95">
+          <div className="font-display text-[clamp(40px,6vw,62px)] leading-none text-gold-500 mb-6">
+            ◎
+          </div>
+          <div className="text-[clamp(19px,2.8vw,30px)] text-paper leading-[1.5] mb-4">
+            以上是初级版。
+            <br />
+            完整版需要一个<em className="em-gold">能记住你的</em> Agent。
+          </div>
+          <p className="text-[clamp(14px,1.7vw,17px)] leading-[2] text-paper/40 max-w-[56ch] mb-7 sm:mb-8">
+            Astor 的完整能力包括 20 题深度画像、跨机构全景统筹、季度复诊与画像增量追踪。
+            <br />
+            7 天免费试用，不绑定支付方式，随时可停。
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center mb-3.5">
+            <Btn href="#cta" solid lg>
+              免费注册 · 7 天试用
+            </Btn>
+            <Btn href="#pricing" lg className="!border-gold-500/[0.18] !text-paper/35">
+              先看定价
+            </Btn>
+          </div>
+          <div className="text-[11.5px] tracking-[0.04em] text-paper/20">
+            收入 100% 来自订阅 · 0% 来自产品分佣 —— 这决定了我们不会向你推荐任何产品
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={onReset}
+          className="text-[12px] tracking-[0.12em] text-paper/25 hover:text-gold-300 transition-colors min-h-[40px] px-2"
         >
-          <RadialBar
-            background={{ fill: "#fef3c7" }}
-            dataKey="value"
-            cornerRadius={20}
-          />
-        </RadialBarChart>
-      </ResponsiveContainer>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xs text-stone-500 uppercase tracking-widest">画像</span>
-        <span className="text-5xl font-display text-amber-700 font-light tabular-nums mt-1">
-          {score}
-        </span>
+          重新做一次
+        </button>
       </div>
     </div>
-  );
-}
-
-/* ---------------- 风险徽章 (浅色) ---------------- */
-function HealthBadge({ level }: { level: PrimaryProfile["riskLevel"] }) {
-  const map = {
-    低: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200" },
-    中: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
-    高: { bg: "bg-rose-50", text: "text-rose-700", border: "border-rose-200" },
-  };
-  const c = map[level];
-  return (
-    <span className={`px-4 py-1.5 rounded-full text-sm font-medium ${c.bg} ${c.text} border ${c.border}`}>
-      风险偏好 · {level}
-    </span>
   );
 }
