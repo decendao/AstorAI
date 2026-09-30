@@ -10,10 +10,6 @@ export function HeroSection() {
   return (
     <section className="relative z-10 min-h-screen flex flex-col justify-center pt-28 sm:pt-36 pb-16">
       <div className="mx-auto max-w-shell px-5 sm:px-8 w-full">
-        <div className="self-start border border-gold-500/30 px-5 sm:px-6 py-2.5 mb-10 sm:mb-16 font-display italic text-[12px] sm:text-[15px] tracking-[0.24em] text-gold-500">
-          AstorAI · Private Banker Agent · MMXXVI
-        </div>
-
         <h1 className="font-display font-normal leading-[0.88] tracking-[0.04em] text-paper mb-4 sm:mb-5 text-[clamp(72px,20vw,190px)]">
           A<em className="em-gold not-italic">A</em>A
         </h1>

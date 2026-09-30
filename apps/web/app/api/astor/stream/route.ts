@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { FRAME_INTERVAL_MS, buildReply, frameToSSE } from "@/lib/astor-reply";
 
 /**
  * Agent 流式演示接口 (mock provider)。
@@ -8,41 +9,27 @@ import { NextRequest } from "next/server";
  *
  * 真接入时: 服务端用 getProvider() 替换 mock, 由前端用同一份 SSE 协议消费。
  * 此处 mock 保证无 key 也能联调前端。
+ *
+ * ⚠️ 本路由仅在有 server runtime 的部署 (next start / ECS / Cloud IDE) 下存在。
+ *    纯静态导出 (output: 'export') 时 Next.js 不会输出 route handler, 前端
+ *    AstorStreamDemo 会自动回退到 lib/astor-reply.ts 的客户端实现。
  */
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const REPLY = (q: string): string => {
-  const t = q.toLowerCase();
-  if (t.includes("红") || t.includes("red")) {
-    return "合规红线: 任何收益/兜底承诺/绝对化表述都需重写为中性风险描述, 详见 packages/compliance/redline.ts";
-  }
-  if (t.includes("管") || t.includes("rbac") || t.includes("权限")) {
-    return "RBAC 五级 L1-L5, ADMIN/MASTER 旁路。中间件位置: middleware.ts → requireRole。";
-  }
-  if (t.includes("阶") || t.includes("pipeline")) {
-    return "智能体流水线: Analyzer → Reporter → Reviewer, zod 校验失败回退规则引擎, 留痕 AgentRun。";
-  }
-  if (t.includes("支") || t.includes("pay")) {
-    return "支付: mock 默认, ASTOR_PAY_PROVIDER=wechat|alipay 切换, key 到位即生效。";
-  }
-  return `Astor OS · 收到问题「${q.slice(0, 80)}」。这是 mock 流式输出, 真实环境由智谱/通义/DeepSeek 驱动。`;
-};
 
 export async function GET(req: NextRequest) {
   const q = req.nextUrl.searchParams.get("q") ?? "Astor 介绍";
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const text = REPLY(q);
+      const text = buildReply(q);
       const chunkSize = 8;
       for (let i = 0; i < text.length; i += chunkSize) {
-        const slice = text.slice(i, i + chunkSize);
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "token", data: slice })}\n\n`));
-        await new Promise((r) => setTimeout(r, 30));
+        controller.enqueue(encoder.encode(frameToSSE({ type: "token", data: text.slice(i, i + chunkSize) })));
+        await new Promise((r) => setTimeout(r, FRAME_INTERVAL_MS));
       }
-      controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`));
+      controller.enqueue(encoder.encode(frameToSSE({ type: "done" })));
       controller.close();
     },
   });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { FRAME_INTERVAL_MS, toFrames, type StreamFrame } from "@/lib/astor-reply";
 
 const PRESETS = [
   { label: "合规红线", q: "合规红线怎么设计的" },
@@ -8,6 +9,18 @@ const PRESETS = [
   { label: "流水线", q: "智能体流水线有哪几步" },
   { label: "支付", q: "支付怎么接" },
 ];
+
+/**
+ * 首帧看门狗 (ms)。
+ *
+ * 纯静态导出时 /api/astor/stream 不存在, 行为取决于托管方:
+ *   - 直接 404        → EventSource 立刻 onerror, 快速回退
+ *   - 回退到 index.html → 返回 200 + text/html, EventSource 会一直挂着等 SSE
+ *     帧, 既不报错也不吐数据 (最难缠的一种)
+ * 所以不能只依赖 onerror, 必须用超时兜底: 到点还没收到第一帧就判定"没有
+ * 服务端", 转本地流式。
+ */
+const FIRST_FRAME_TIMEOUT_MS = 1500;
 
 type Line = { id: number; text: string; role: "user" | "astor" };
 
@@ -18,6 +31,7 @@ export function AstorStreamDemo() {
   const [cur, setCur] = useState("");
   const esRef = useRef<EventSource | null>(null);
   const idRef = useRef(0);
+  const runRef = useRef(0);
 
   useEffect(() => () => esRef.current?.close(), []);
 
@@ -26,42 +40,104 @@ export function AstorStreamDemo() {
     const text = question.trim();
     if (!text) return;
 
+    // 每次提问一个自增 runId, 用来作废上一轮还在飞的定时器/连接
+    const run = ++runRef.current;
+    const alive = () => run === runRef.current;
+
     setQ("");
     setStreaming(true);
     setCur("");
     setLines((l) => [...l, { id: idRef.current++, text, role: "user" }]);
     setLines((l) => [...l, { id: idRef.current++, text: "", role: "astor" }]);
 
-    const es = new EventSource(`/api/astor/stream?q=${encodeURIComponent(text)}`);
-    esRef.current = es;
+    let gotFrame = false;
+    let settled = false;
 
-    es.onmessage = (ev) => {
-      try {
-        const msg = JSON.parse(ev.data) as { type: string; data?: string };
-        if (msg.type === "token" && msg.data) {
-          setCur((c) => c + msg.data);
-        } else if (msg.type === "done") {
-          setLines((l) => {
-            if (!l.length) return l;
-            const last = l[l.length - 1];
-            if (last.role === "astor" && !last.text && cur) {
-              return [...l.slice(0, -1), { ...last, text: cur }];
-            }
-            return l;
-          });
-          setCur("");
-          setStreaming(false);
-          es.close();
+    // accumulator: React state 在同一 tick 内连续 setCur 会丢中间值,
+    // 这里用可变对象兜住, finish 时拿它落最终文本。
+    const acc = { text: "" };
+
+    const finish = () => {
+      if (settled || !alive()) return;
+      settled = true;
+      window.clearTimeout(watchdog);
+      esRef.current?.close();
+      esRef.current = null;
+      setCur("");
+      setStreaming(false);
+      setLines((l) => {
+        if (!l.length) return l;
+        const last = l[l.length - 1];
+        if (last.role === "astor" && !last.text && acc.text) {
+          return [...l.slice(0, -1), { ...last, text: acc.text }];
         }
-      } catch {
-        /* 忽略坏帧 */
+        return l;
+      });
+    };
+
+    const consume = (msg: StreamFrame) => {
+      if (!alive()) return;
+      if (msg.type === "token" && msg.data) {
+        gotFrame = true;
+        acc.text += msg.data;
+        setCur(acc.text);
+      } else if (msg.type === "done") {
+        finish();
       }
     };
 
-    es.onerror = () => {
-      setStreaming(false);
-      es.close();
+    /** 本地回退: 复用同一份帧切分 + 节奏, SSE 不可用时观感一致 */
+    const runLocal = () => {
+      if (!alive() || settled) return;
+      const frames = toFrames(text);
+      let i = 0;
+      const tick = () => {
+        if (!alive() || settled) return;
+        const frame = frames[i++];
+        if (!frame) return finish();
+        consume(frame);
+        if (i < frames.length) window.setTimeout(tick, FRAME_INTERVAL_MS);
+      };
+      tick();
     };
+
+    const watchdog = window.setTimeout(() => {
+      if (!gotFrame && alive() && !settled) {
+        esRef.current?.close();
+        esRef.current = null;
+        runLocal();
+      }
+    }, FIRST_FRAME_TIMEOUT_MS);
+
+    // ── 优先走真 SSE (有 server runtime 的部署: ECS / next start / Cloud IDE)
+    try {
+      const es = new EventSource(`/api/astor/stream?q=${encodeURIComponent(text)}`);
+      esRef.current = es;
+
+      es.onmessage = (ev) => {
+        try {
+          consume(JSON.parse(ev.data) as StreamFrame);
+        } catch {
+          /* 忽略坏帧 */
+        }
+      };
+
+      es.onerror = () => {
+        if (gotFrame) {
+          // 已经开始吐字了 (真服务端中途断流) —— 就此打住, 不重复本地重放
+          finish();
+        } else {
+          es.close();
+          if (esRef.current === es) esRef.current = null;
+          window.clearTimeout(watchdog);
+          runLocal();
+        }
+      };
+    } catch {
+      // EventSource 构造本身失败 → 直接本地
+      window.clearTimeout(watchdog);
+      runLocal();
+    }
   }
 
   return (
@@ -100,7 +176,7 @@ export function AstorStreamDemo() {
         {streaming && (
           <div className="py-3.5 hair-b">
             <div className="flex items-baseline gap-3 mb-1.5">
-              <span className="font-display italic text-[11.5px] tracking-[0.16em] text-gold-500 min-w-[42px]">
+              <span className="font-display italic text-[11.5px] tracking-[0.16em] text-gold-500">
                 ASTOR
               </span>
               <span className="text-[10.5px] text-paper/20">生成中</span>

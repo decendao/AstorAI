@@ -1,6 +1,12 @@
 import type { MetadataRoute } from "next";
 import { POSTS } from "@/lib/posts";
 
+/**
+ * 内容完全由 POSTS (静态数据) 决定, 允许在 output: "export" 下预渲染。
+ * lastModified 的 now 在构建时求值一次 —— 对站点地图来说正是想要的语义。
+ */
+export const dynamic = "force-static";
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://astorai.cn";
   const now = new Date();
