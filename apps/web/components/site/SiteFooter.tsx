@@ -1,8 +1,30 @@
 export function SiteFooter() {
   const cols = [
-    { k: "PRODUCT", l: ["免费诊断", "财富诊断", "全景统筹", "陪伴服务"] },
-    { k: "ALLIANCE", l: ["3A 投资者联盟", "闭门议题局", "闭门私享会", "L2 邀请申请"] },
-    { k: "BOUNDARY", l: ["不荐股", "不交易", "不承诺收益", "不代客理财"] },
+    {
+      k: "PRODUCT",
+      l: [
+        { t: "免费诊断", h: "/#diagnose" },
+        { t: "财富诊断", h: "/#capability" },
+        { t: "Agent 演示", h: "/astor" },
+      ],
+    },
+    {
+      k: "INSIGHTS",
+      l: [
+        { t: "全部洞察", h: "/insights" },
+        { t: "定价", h: "/#pricing" },
+        { t: "为什么", h: "/#manifesto" },
+      ],
+    },
+    {
+      k: "BOUNDARY",
+      l: [
+        { t: "不荐股", h: "/#capability" },
+        { t: "不交易", h: "/#capability" },
+        { t: "不承诺收益", h: "/#capability" },
+        { t: "不代客理财", h: "/#capability" },
+      ],
+    },
   ];
 
   return (
@@ -29,7 +51,13 @@ export function SiteFooter() {
               </div>
               <div className="text-[13.5px] leading-[2.1] text-paper/25">
                 {c.l.map((x) => (
-                  <div key={x}>{x}</div>
+                  <a
+                    key={x.t}
+                    href={x.h}
+                    className="hover:text-gold-300 transition-colors"
+                  >
+                    {x.t}
+                  </a>
                 ))}
               </div>
             </div>

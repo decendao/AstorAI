@@ -105,6 +105,19 @@ export function PricingSection() {
             任何投资决策请咨询具备相应资质的持牌机构。
           </p>
         </div>
+
+        {/* insights entry */}
+        <div className="mt-[clamp(60px,8vw,100px)]">
+          <SectionMark en="Insights" cn="洞察" n="READ" />
+          <h3 className="font-normal text-paper mb-6 tracking-[-0.005em] text-[clamp(20px,2.8vw,32px)]">
+            我们不写市场点评，
+            <br />
+            只写那些<em className="em-gold">需要想清楚</em>才能回答的问题。
+          </h3>
+          <Btn href="/insights" lg className="mb-[clamp(40px,5vw,60px)]">
+            阅读全部洞察 →
+          </Btn>
+        </div>
       </div>
     </section>
   );

@@ -10,6 +10,7 @@ const NAV = [
   { href: "#audit", label: "可信" },
   { href: "#pricing", label: "定价" },
   { href: "/insights", label: "洞察" },
+  { href: "/astor", label: "演示" },
 ];
 
 export function SiteHeader() {

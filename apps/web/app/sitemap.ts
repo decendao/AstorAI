@@ -1,15 +1,29 @@
 import type { MetadataRoute } from "next";
+import { POSTS } from "@/lib/posts";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://astorai.cn";
   const now = new Date();
+
   return [
     { url: `${base}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
-    { url: `${base}/agent`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/pricing`, lastModified: now, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${base}/register`, lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${base}/login`, lastModified: now, changeFrequency: "monthly", priority: 0.5 },
-    { url: `${base}/terms`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
-    { url: `${base}/privacy`, lastModified: now, changeFrequency: "yearly", priority: 0.3 },
+    {
+      url: `${base}/insights`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${base}/astor`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    ...POSTS.map((p) => ({
+      url: `${base}/insights/${p.slug}`,
+      lastModified: new Date(p.date),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    })),
   ];
 }
