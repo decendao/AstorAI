@@ -49,7 +49,7 @@ fi
 
 echo "[build-static] 开始 next build (ASTOR_STATIC_EXPORT=1)"
 cd "$WEB_DIR"
-ASTOR_STATIC_EXPORT=1 pnpm exec next build
+ASTOR_STATIC_EXPORT=1 corepack pnpm exec next build
 
 echo ""
 echo "[build-static] 完成 ✅"

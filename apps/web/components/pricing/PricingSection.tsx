@@ -67,7 +67,8 @@ function Plan({
           </div>
         ))}
       </div>
-      <Btn href={hot ? "#cta" : "#diagnose"} solid={hot} className="w-full">
+      {/* 绝对路径：问卷在 /match 页（#diagnose 锚点在此），本页无此锚点 */}
+      <Btn href={hot ? "/contact" : "/match#diagnose"} solid={hot} className="w-full">
         {cta}
       </Btn>
     </div>
