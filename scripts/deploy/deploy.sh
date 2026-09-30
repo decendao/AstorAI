@@ -8,6 +8,10 @@
 #   bash scripts/deploy/deploy.sh --update   # 拉代码 + 重新构建 + 重启
 #   bash scripts/deploy/deploy.sh --ssl      # 仅配置 Nginx + 申请 SSL
 #
+# 备案未完成时改用：
+#   bash scripts/deploy/deploy-oss.sh --build        # 静态版 → OSS（推荐，9.9元/年）
+#   bash scripts/deploy/deploy-workbench.sh          # 无公网 IP 部署到 ECS
+#
 set -euo pipefail
 
 # ---------- 配置 ----------
