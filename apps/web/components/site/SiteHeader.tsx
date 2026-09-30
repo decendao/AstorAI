@@ -33,10 +33,9 @@ export function SiteHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-ink-900/55 backdrop-blur-[22px] border-b border-gold-500/[0.14]">
       <div className="mx-auto max-w-shell px-5 sm:px-8 py-3.5 sm:py-4 flex items-center justify-between gap-5">
-        <Link href="/" className="flex items-baseline gap-3 min-w-0 shrink-0">
-          <span className="font-display text-[17px] tracking-[0.15em] text-gold-500">AAA</span>
-          <span className="text-[13.5px] tracking-[0.14em] text-paper whitespace-nowrap">
-            AstorAI
+        <Link href="/" className="flex items-baseline gap-2.5 min-w-0 shrink-0">
+          <span className="font-display text-[17px] tracking-[0.1em] text-gold-500 whitespace-nowrap">
+            Astor Agent
           </span>
         </Link>
 

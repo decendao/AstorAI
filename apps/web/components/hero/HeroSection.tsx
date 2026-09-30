@@ -10,8 +10,13 @@ export function HeroSection() {
   return (
     <section className="relative z-10 min-h-screen flex flex-col justify-center pt-28 sm:pt-36 pb-16">
       <div className="mx-auto max-w-shell px-5 sm:px-8 w-full">
-        <h1 className="font-display font-normal leading-[0.88] tracking-[0.04em] text-paper mb-4 sm:mb-5 text-[clamp(72px,20vw,190px)]">
-          A<em className="em-gold not-italic">A</em>A
+        {/*
+          原为 "AAA" 三字母字标, 字号给到 clamp(72px,20vw,190px)。
+          换成 "Astor Agent" 后有 11 个字符, 沿用原字号会横向溢出,
+          因此单独下调一档并保持金色重音落在 "Agent" 上。
+        */}
+        <h1 className="font-display font-normal leading-[0.98] tracking-[0.01em] text-paper mb-4 sm:mb-5 text-[clamp(40px,8.6vw,104px)]">
+          Astor <em className="em-gold not-italic">Agent</em>
         </h1>
 
         <h2 className="font-bold tracking-[-0.02em] text-paper leading-[1.14] mb-8 sm:mb-11 text-[clamp(30px,6.6vw,76px)] max-w-[14ch]">

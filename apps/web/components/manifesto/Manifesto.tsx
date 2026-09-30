@@ -43,6 +43,27 @@ export function Manifesto() {
             不是套了金融外壳的聊天机器人。一个真正的私人银行家智能体，
             理解资产背后的人，用平实的语言告诉你<em>什么才真正重要</em>。
           </p>
+
+          {/*
+            Manifesto 收尾三句 —— 独立成块, 因为这是整篇的落点:
+            从"我们是什么"退回"我们不做什么", 再收到"为什么值得做"。
+            放在金色段落之后, 用 hair-b 收边, 视觉上把长文收住。
+          */}
+          <div className="hair-t hair-b mt-[clamp(34px,5vw,64px)] pt-[clamp(26px,3.5vw,44px)]">
+            <p className="font-bold tracking-[-0.01em] text-paper leading-[1.75] mb-6 text-[clamp(19px,2.5vw,30px)]">
+              我们不是来交易你的资产。
+              <br />
+              我们在这里帮你<em className="em-gold">透过资产理解自己</em>。
+            </p>
+
+            <p className="text-[16px] sm:text-[20px] leading-[2.05] text-paper/45 max-w-[46ch]">
+              因为自我认知会复利。
+              <br />
+              而每一位严肃的投资者，
+              <br />
+              都值得一面<em className="em-gold">诚实的镜子</em>。
+            </p>
+          </div>
         </div>
       </div>
     </section>

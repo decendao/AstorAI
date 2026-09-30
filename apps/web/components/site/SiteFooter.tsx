@@ -33,8 +33,8 @@ export function SiteFooter() {
       <div className="mx-auto max-w-shell px-5 sm:px-8 py-14 sm:py-20">
         <div className="grid gap-8 sm:gap-12 grid-cols-2 lg:grid-cols-4 mb-12 sm:mb-16">
           <div>
-            <div className="font-display text-[22px] tracking-[0.1em] text-gold-500 mb-3">
-              AAA
+            <div className="font-display text-[22px] tracking-[0.06em] text-gold-500 mb-3">
+              Astor Agent
             </div>
             <div className="text-[13.5px] leading-[2.1] text-paper/25">
               AstorAI 财富智能体
