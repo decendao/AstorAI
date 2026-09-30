@@ -9,20 +9,20 @@ import { Btn } from "@/components/ui/Editorial";
  * 全部使用绝对路径（/#section），否则在 /insights、/astor 等子页面上
  * 相对锚点会失效（见 commit 2ac9bbd 修的就是这个）。
  *
- * 落点说明 —— 四项都指向首页真实存在的 section id，不做假链接：
- *   Astor 愿景    → #manifesto   Manifesto 宣言
- *   AI 智能体     → #capability  智能体能力（含边界声明）
- *   匹配你的 Astor → #diagnose    6 题问卷 → 五维画像
- *   联系我们      → #cta         页面底部行动区
+ * 四项各自对应一个 subpage（landing 精简后，深度内容已下沉）：
+ *   Astor 愿景     → /vision   Manifesto + 我们相信 + 旧方式对比
+ *   AI 智能体      → /agent    能力 + 审计可信 + 定价
+ *   匹配你的 Astor  → /match    6 题问卷 → 五维画像
+ *   联系我们       → /contact  运营主体 + 服务边界
  *
- * 注意: #cta 目前没有任何联系方式（无邮箱/电话/表单），
- * 详见 NAV 下方 TODO 注释。
+ * 注意: /contact 目前仍无邮箱/电话/表单（站内无任何联系方式），
+ * 见 components/contact/ContactSection.tsx 的 CHANNELS 配置。
  */
 const NAV = [
-  { href: "/#manifesto", label: "Astor愿景" },
-  { href: "/#capability", label: "AI 智能体" },
-  { href: "/#diagnose", label: "匹配你的Astor" },
-  { href: "/#cta", label: "联系我们" },
+  { href: "/vision", label: "Astor愿景" },
+  { href: "/agent", label: "AI 智能体" },
+  { href: "/match", label: "匹配你的Astor" },
+  { href: "/contact", label: "联系我们" },
 ];
 
 /** 导航项的统一样式：hover 变金 + 下划线从左展开 */
@@ -50,7 +50,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="shrink-0">
-          <Btn href="/#diagnose" className="!px-5 !py-2.5 !text-[12px] !min-h-[40px]">
+          <Btn href="/match" className="!px-5 !py-2.5 !text-[12px] !min-h-[40px]">
             免费诊断
           </Btn>
         </div>

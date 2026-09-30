@@ -140,10 +140,10 @@ export function CtaSection() {
             而每一位严肃的投资者，都值得一面诚实的镜子。
           </p>
           <div className="flex flex-wrap gap-3.5 justify-center">
-            <Btn href="#diagnose" solid lg>
+            <Btn href="/match" solid lg>
               免费获取我的财富诊断
             </Btn>
-            <Btn href="#capability" lg>
+            <Btn href="/agent" lg>
               了解 AstorAI 如何工作
             </Btn>
           </div>

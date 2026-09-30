@@ -3,8 +3,8 @@ export function SiteFooter() {
     {
       k: "PRODUCT",
       l: [
-        { t: "免费诊断", h: "/#diagnose" },
-        { t: "财富诊断", h: "/#capability" },
+        { t: "免费诊断", h: "/match" },
+        { t: "AI 智能体", h: "/agent" },
         { t: "Agent 演示", h: "/astor" },
       ],
     },
@@ -12,17 +12,18 @@ export function SiteFooter() {
       k: "INSIGHTS",
       l: [
         { t: "全部洞察", h: "/insights" },
-        { t: "定价", h: "/#pricing" },
-        { t: "为什么", h: "/#manifesto" },
+        { t: "定价", h: "/agent#pricing" },
+        { t: "Astor 愿景", h: "/vision" },
+        { t: "联系我们", h: "/contact" },
       ],
     },
     {
       k: "BOUNDARY",
       l: [
-        { t: "不荐股", h: "/#capability" },
-        { t: "不交易", h: "/#capability" },
-        { t: "不承诺收益", h: "/#capability" },
-        { t: "不代客理财", h: "/#capability" },
+        { t: "不荐股", h: "/agent" },
+        { t: "不交易", h: "/agent" },
+        { t: "不承诺收益", h: "/agent" },
+        { t: "不代客理财", h: "/agent" },
       ],
     },
   ];

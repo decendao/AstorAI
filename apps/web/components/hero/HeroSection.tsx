@@ -15,25 +15,25 @@ export function HeroSection() {
         </h1>
 
         <h2 className="font-bold tracking-[-0.02em] text-paper leading-[1.14] mb-8 sm:mb-11 text-[clamp(30px,6.6vw,76px)] max-w-[14ch]">
-          An Agent
+          一个比你
           <br />
-          that knows your
+          <em className="em-gold">更懂你资产</em>的
           <br />
-          <em className="em-gold">assets</em> better than you
+          智能体
         </h2>
 
         <p className="text-[15px] sm:text-[19px] leading-[2] text-paper/40 max-w-[46ch] mb-10 sm:mb-14">
-          比你更懂你的资产的财富智能体 ——
+          我们不在这里交易你的资产，
           <br />
-          我们不在这里交易你的资产，我们在帮你
+          我们在帮你
           <em className="em-gold">透过资产理解自己</em>。
         </p>
 
         <div className="flex flex-wrap gap-3.5 mb-5">
-          <Btn href="#diagnose" solid lg>
+          <Btn href="/match" solid lg>
             免费获取我的财富诊断
           </Btn>
-          <Btn href="#capability" lg>
+          <Btn href="/agent" lg>
             了解 AstorAI 如何工作
           </Btn>
         </div>

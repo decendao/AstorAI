@@ -170,10 +170,10 @@ export function ReportPanel({
             7 天免费试用，不绑定支付方式，随时可停。
           </p>
           <div className="flex flex-wrap gap-3 justify-center mb-3.5">
-            <Btn href="#cta" solid lg>
+            <Btn href="/contact" solid lg>
               免费注册 · 7 天试用
             </Btn>
-            <Btn href="#pricing" lg className="!border-gold-500/[0.18] !text-paper/35">
+            <Btn href="/agent#pricing" lg className="!border-gold-500/[0.18] !text-paper/35">
               先看定价
             </Btn>
           </div>

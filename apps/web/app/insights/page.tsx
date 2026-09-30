@@ -105,7 +105,7 @@ export default function InsightsPage() {
 
           <div className="mt-14 sm:mt-20 text-center">
             <Link
-              href="/#diagnose"
+              href="/match"
               className="btn-line btn-line-solid px-9 sm:px-10 py-4 sm:py-[18px] text-[13px] sm:text-[15px] min-h-[52px] inline-flex"
             >
               <span className="relative z-[2]">免费做一次诊断 →</span>

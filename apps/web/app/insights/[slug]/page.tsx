@@ -90,10 +90,10 @@ export default async function PostPage({
                 6 道题，2 分钟。你会知道现在最该处理的是哪一件事。
               </div>
               <div className="flex flex-wrap gap-3 justify-center">
-                <Btn href="/#diagnose" solid>
+                <Btn href="/match" solid>
                   免费获取我的财富诊断
                 </Btn>
-                <Btn href="/#pricing">先看定价</Btn>
+                <Btn href="/agent#pricing">先看定价</Btn>
               </div>
             </div>
 

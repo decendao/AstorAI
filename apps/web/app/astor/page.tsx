@@ -65,7 +65,7 @@ export default function AstorDemoPage() {
           </div>
 
           <div className="text-center mt-14 sm:mt-20">
-            <Btn href="/#diagnose" solid lg>
+            <Btn href="/match" solid lg>
               体验五维画像诊断
             </Btn>
           </div>
