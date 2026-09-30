@@ -13,7 +13,11 @@ import { SectionMark, Btn } from "@/components/ui/Editorial";
 type Answers = Record<QuestionId, string[]>;
 const EMPTY: Answers = { q1: [], q2: [], q3: [], q4: [], q5: [], q6: [] };
 
-export function SurveyFlow() {
+/**
+ * lead: 本页第一个区块时为 true —— 顶部用 pt 避开 fixed header,
+ * 且不再叠一层外层"页面头"。详见 Manifesto 组件的同名 prop 注释。
+ */
+export function SurveyFlow({ lead = false }: { lead?: boolean }) {
   const [started, setStarted] = useState(false);
   const [idx, setIdx] = useState(0);
   const [ans, setAns] = useState<Answers>(EMPTY);
@@ -68,7 +72,14 @@ export function SurveyFlow() {
 
   if (done && report) {
     return (
-      <div id="diagnose" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+      <div
+        id="diagnose"
+        className={
+          lead
+            ? "relative z-10 hair-t pt-28 sm:pt-36 pb-[clamp(40px,5vw,72px)]"
+            : "relative z-10 hair-t py-[clamp(110px,15vh,190px)]"
+        }
+      >
         <div className="mx-auto max-w-shell px-5 sm:px-8">
           <SectionMark en="Initial Report" cn="初级诊断报告" n="GEN" />
           <ReportPanel profile={report} onReset={reset} />
@@ -78,9 +89,29 @@ export function SurveyFlow() {
   }
 
   return (
-    <section id="diagnose" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+    <section
+      id="diagnose"
+      className={
+        lead
+          ? "relative z-10 hair-t pt-28 sm:pt-36 pb-[clamp(40px,5vw,72px)]"
+          : "relative z-10 hair-t py-[clamp(110px,15vh,190px)]"
+      }
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
-        <SectionMark en="Free Diagnosis" cn="免费诊断" n="04" />
+        <SectionMark en="Match" cn="匹配你的 Astor" n="03" />
+
+        {lead && (
+          <>
+            <h1 className="font-bold tracking-[-0.012em] text-paper leading-[1.16] mb-5 sm:mb-6 text-[clamp(28px,5.4vw,60px)] max-w-[18ch]">
+              先认识自己，
+              <br />
+              再谈<em className="em-gold">资产配置</em>。
+            </h1>
+            <p className="text-[15px] sm:text-[18px] leading-[2] text-paper/40 max-w-[54ch] mb-[clamp(28px,4vw,48px)]">
+              6 道题 · 约 2 分钟 · 无需注册。全部在浏览器本地计算，不上传你的任何答案。
+            </p>
+          </>
+        )}
 
         <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.14] mb-[clamp(20px,3vw,32px)] text-[clamp(28px,5.4vw,60px)]">
           先看看，

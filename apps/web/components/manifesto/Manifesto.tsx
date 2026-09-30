@@ -1,10 +1,39 @@
 import { SectionMark } from "@/components/ui/Editorial";
 
-export function Manifesto() {
+/**
+ * lead: 该区块是否为本页第一个区块。
+ *
+ * 之前每个 subpage 都在组件外面套一层"页面头" (标题 + 副标题)，
+ * 而组件自己又带 SectionMark 和大标题 —— 两层标题重复，且中间
+ * 叠了 pb(110px) + py(190px) 近 300px 空白。点导航进来先撞见一个
+ * 光秃秃的标题页头，要再滚一段才见正文。
+ *
+ * 现在: 去掉外层页面头, 由首个组件用 lead 领衔 —— 标题与正文
+ * 连成一篇 (这本来就是这份文案的形态), 顶部用 pt 避开 fixed header。
+ */
+export function Manifesto({ lead = false }: { lead?: boolean }) {
   return (
-    <section id="manifesto" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+    <section
+      id="manifesto"
+      className={
+        lead
+          ? "relative z-10 hair-t pt-28 sm:pt-36 pb-[clamp(40px,5vw,72px)]"
+          : "relative z-10 hair-t py-[clamp(110px,15vh,190px)]"
+      }
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
-        <SectionMark en="Manifesto" cn="为什么存在" n="01" />
+        <SectionMark en="Manifesto" cn="Astor AI 愿景哲学" n="01" />
+
+        {lead && (
+          <>
+            <h1 className="font-bold tracking-[-0.012em] text-paper leading-[1.16] mb-5 sm:mb-6 text-[clamp(28px,5.4vw,60px)]">
+              关于 AstorAI
+            </h1>
+            <p className="text-[15px] sm:text-[18px] leading-[2] text-paper/40 max-w-[54ch] mb-[clamp(28px,4vw,48px)]">
+              比你更懂你的资产的财富智能体。
+            </p>
+          </>
+        )}
 
         <div className="max-w-prose">
           <p className="font-bold tracking-[-0.01em] text-paper leading-[1.82] mb-[clamp(30px,4vw,48px)] text-[clamp(20px,2.8vw,34px)]">

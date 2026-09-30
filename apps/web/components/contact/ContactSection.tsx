@@ -36,11 +36,15 @@ export function ContactSection() {
           <div>
             <SectionMark en="Contact" cn="联系我们" n="04" />
 
-            <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.2] mb-6 sm:mb-7 text-[clamp(26px,4.6vw,46px)] max-w-[16ch]">
+            {/*
+              h1 而非 h2: 「联系我们」是导航里最容易被直接点进来的入口,
+              作为独立落地页必须有一级标题, 否则整页只有 h2, 语义层级断层。
+            */}
+            <h1 className="font-bold tracking-[-0.012em] text-paper leading-[1.2] mb-6 sm:mb-7 text-[clamp(26px,4.6vw,46px)] max-w-[16ch]">
               来信我们，
               <br />
               哪怕只是<em className="em-gold">想先聊聊</em>。
-            </h2>
+            </h1>
 
             <p className="text-[15px] sm:text-[17px] leading-[2] text-paper/40 max-w-[46ch] mb-9 sm:mb-11">
               不推销、不催促。如果你只是想找个人聊聊自己的资产结构，

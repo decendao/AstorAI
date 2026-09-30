@@ -43,11 +43,35 @@ const AUDIT = [
   { k: "05 · Red Line", t: "31 条合规红线扫描", d: "承诺性话术物理拦截，Reviewer 层自动执行。这不是免责声明，是我们产品的一部分。" },
 ];
 
-export function CapabilitySection() {
+/**
+ * lead: 本页第一个区块时为 true —— 顶部用 pt 避开 fixed header,
+ * 且不再叠一层外层"页面头"。详见 Manifesto 组件的同名 prop 注释。
+ */
+export function CapabilitySection({ lead = false }: { lead?: boolean }) {
   return (
-    <section id="capability" className="relative z-10 hair-t py-[clamp(110px,15vh,190px)]">
+    <section
+      id="capability"
+      className={
+        lead
+          ? "relative z-10 hair-t pt-28 sm:pt-36 pb-[clamp(40px,5vw,72px)]"
+          : "relative z-10 hair-t py-[clamp(110px,15vh,190px)]"
+      }
+    >
       <div className="mx-auto max-w-shell px-5 sm:px-8">
-        <SectionMark en="What We Do" cn="AstorAI 做什么" n="05" />
+        <SectionMark en="Agent" cn="AI 智能体" n="02" />
+
+        {lead && (
+          <>
+            <h1 className="font-bold tracking-[-0.012em] text-paper leading-[1.16] mb-5 sm:mb-6 text-[clamp(28px,5.4vw,60px)] max-w-[18ch]">
+              AI 出草稿，
+              <br />
+              <em className="em-gold">人批准</em>才算数。
+            </h1>
+            <p className="text-[15px] sm:text-[18px] leading-[2] text-paper/40 max-w-[54ch] mb-[clamp(28px,4vw,48px)]">
+              每一段输出都是 DRAFT。发布前必须过 Reviewer 与人工审批闸门 —— 这是我们和"自动理财"之间最硬的一道线。
+            </p>
+          </>
+        )}
 
         <h2 className="font-bold tracking-[-0.012em] text-paper leading-[1.14] mb-[clamp(44px,6vw,80px)] text-[clamp(28px,5.4vw,60px)]">
           三件事，
