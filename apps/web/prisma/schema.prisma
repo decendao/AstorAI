@@ -1,0 +1,55 @@
+// Astor OS · Prisma schema (精简版)
+//
+// 数据库: PostgreSQL 16 (Neon 免费档即可, 0.5GB 足够 demo)
+// 范围: 仅 Astor 演示用表 (正式业务由 websitte 仓的 Prisma 接管, 复用同套 RBAC/Encryption)
+//
+// 使用:
+//   1. cp .env.example .env, 填 DATABASE_URL
+//   2. npx prisma generate
+//   3. npx prisma db push    (首次; 后续用 migrate dev)
+//   4. pnpm dev
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
+}
+
+// ─── Survey: 五维画像提交 ────────────────────────────────────────
+model SurveySubmission {
+  id          String   @id @default(cuid())
+  sessionId   String   @unique
+  answers     Json     // {q1, q2, q3, q4, q5, q6_text}
+  profile     Json     // computeProfile() 输出 {alpha, asset, social, risk, service}
+  userAgent   String?
+  ipHash      String?  // 用 SHA-256(盐+ip), 不存明文 IP
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([ipHash, createdAt])
+}
+
+// ─── Astor Chat: 智能体演示对话留痕 ───────────────────────────────
+model AstorChat {
+  id        String   @id @default(cuid())
+  sessionId String   // 同一会话多条记录
+  role      String   // "user" | "assistant"
+  content   String   @db.Text
+  preset    String?  // 客户端预设标签 (红/RBAC/流水线/支付/自定义)
+  createdAt DateTime @default(now())
+
+  @@index([sessionId, createdAt])
+}
+
+// ─── Demo Member: 简化会员表 (无加密字段, 仅 demo) ──────────────────
+model DemoMember {
+  id           String   @id @default(cuid())
+  displayName  String
+  level        Int      @default(1) // L1..L5
+  joinedAt     DateTime @default(now())
+  surveyCount  Int      @default(0)
+}
